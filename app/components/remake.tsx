@@ -3,7 +3,13 @@ import React, { useState, useEffect } from "react";
 import { Loader } from "./loader";
 import styles from "./remake.module.css";
 
-const TextFormatter = ({ text, className }) => {
+const TextFormatter = ({
+  text,
+  className,
+}: {
+  text: string;
+  className: string;
+}) => {
   const paragraphs = text
     .split("\n")
     .map((paragraph, index) => <p key={index}>{paragraph}</p>);

@@ -88,7 +88,7 @@ export default async function handler(
   res.setHeader("Content-Type", "application/json");
   res.setHeader("Transfer-Encoding", "chunked");
 
-  function getMessagesPrompt(chat) {
+  function getMessagesPrompt(chat:any) {
     let messages: any[] = [];
 
     chat.map((message: any) => {
@@ -163,6 +163,7 @@ export default async function handler(
           const chunkValue = decoder.decode(value);
           output += chunkValue;
           res.write(JSON.stringify({ reply: i, message: chunkValue }) + "\n");
+          // @ts-ignore:next-line
           res.flush();
         }
 
@@ -177,9 +178,10 @@ export default async function handler(
       res.write(
         JSON.stringify({
           reply: 6,
-          message: await generateImageEvoke(conversation[5].message, title),
+          message: await generateImageEvoke(conversation[5].message, title as string),
         }) + "\n"
       );
+      // @ts-ignore:next-line
       res.flush();
       res.end();
     } catch (error) {

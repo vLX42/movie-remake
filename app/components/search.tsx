@@ -19,6 +19,7 @@ export const MovieSearchForm: React.FC = () => {
   const inputRef = useRef(null);
 
   useEffect(() => {
+    // @ts-ignore:next-line
     inputRef?.current?.focus();
   }, []);
 
