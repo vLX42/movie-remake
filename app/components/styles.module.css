@@ -1,0 +1,137 @@
+.input {
+  font-size: 34px;
+  font-weight: bold;
+  border: none;
+  border-bottom: 2px solid white;
+  outline: none;
+  background-color: transparent;
+  max-width: 800px;
+  width: 100%;
+  margin-bottom: 50px;
+  padding-bottom: 15px;
+}
+
+.form {
+  max-width: 800px;
+  width: 100%;
+}
+
+@keyframes fadeInDrop {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.movie {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: normal;
+  align-items: stretch;
+  align-content: normal;
+  max-width: 800px;
+  gap: 20px;
+  margin-bottom: 30px;
+  cursor: pointer;
+  user-select: none;
+
+  transition: transform 0.6s;
+}
+.movieWrapper {
+  animation: fadeInDrop 0.5s forwards;
+  transition: transform 0.6s;
+}
+.movie:hover {
+  transform: scale(1.04);
+}
+
+.movie:active {
+  transform: scale(0.9);
+}
+
+.poster {
+  display: block;
+  flex-grow: 0;
+  flex-shrink: 1;
+  flex-basis: auto;
+  align-self: auto;
+  order: 0;
+}
+
+.posterImage {
+  width: 200px;
+  height: 300px;
+  background-color: gray;
+}
+
+.description {
+  display: block;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: auto;
+  align-self: auto;
+  order: 0;
+}
+
+.skeletonPoster,
+.skeletonHeadline,
+.skeletonLine {
+  position: relative;
+  background-color: #222;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  overflow: hidden;
+}
+.skeletonPoster::after,
+.skeletonHeadline::after,
+.skeletonLine::after {
+  display: block;
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform: translateX(-100%);
+  background: -webkit-gradient(
+    linear,
+    left top,
+    right top,
+    from(transparent),
+    color-stop(#333),
+    to(transparent)
+  );
+
+  background: linear-gradient(90deg, transparent, #333, transparent);
+
+  /* Adding animation */
+  animation: loading 0.8s infinite;
+}
+
+.skeletonPoster {
+  width: 200px;
+  height: 300px;
+}
+
+.skeletonHeadline {
+  height: 25px;
+  margin-bottom: 10px;
+  width: 480px;
+}
+
+.skeletonLine {
+  height: 21px;
+  margin-bottom: 3px;
+  width: 480px;
+}
+
+/* Loading Animation */
+@keyframes loading {
+  100% {
+    transform: translateX(100%);
+  }
+}

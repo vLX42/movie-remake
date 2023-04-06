@@ -1,7 +1,6 @@
-import "./globals.css";
-import { MovieSearchForm } from "./components/search";
+import "../../globals.css";
 import { Abril_Fatface } from "next/font/google";
-import styles from "./styles.module.css";
+import styles from "../../styles.module.css";
 const abril_fatface = Abril_Fatface({ weight: ["400"], subsets: ["latin"] });
 
 export const metadata = {
@@ -15,12 +14,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>
-        <main className={styles.main}>
-          <div>{children}</div>
-        </main>
-      </body>
-    </html>
+    <>
+      <h1 className={`${styles.headline} ${abril_fatface.className}`}>
+        Hollywood Movie Remake Generator
+      </h1>
+
+      {children}
+    </>
   );
 }

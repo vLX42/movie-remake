@@ -3,6 +3,8 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
-}
-
-module.exports = nextConfig
+  images: {
+    domains: ["image.tmdb.org", "oaidalleapiprodscus.blob.core.windows.net"],
+  },
+};
+module.exports = nextConfig;

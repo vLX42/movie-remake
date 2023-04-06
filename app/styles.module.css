@@ -1,0 +1,17 @@
+.headline {
+  font-size: 85px;
+  padding-bottom: 60px;
+}
+
+.main {
+  max-width: 800px;
+  width: 100%;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+@media only screen and (max-width: 767px) {
+  .main {
+    margin: 20px;
+  }
+}
