@@ -103,6 +103,7 @@ const Remake = ({
       {reply3 && (
         <>
           {reply4 ? (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={`/api/getImage?UUID=${reply4}`}
               width="512"
