@@ -105,7 +105,7 @@ const Remake = ({
           {reply4 ? (
             <img
               src={`/api/getImage?UUID=${reply4}`}
-              with="512"
+              width="512"
               height="512"
               alt={reply3}
             />
