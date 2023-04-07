@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 async function generateImageEvoke(prompt: string, title: string) {
   try {
-    console.log("generate image")
+    console.log("generate image");
     const response = await fetch(
       "https://xarrreg662.execute-api.us-east-1.amazonaws.com/sdAddEle",
       {
@@ -26,7 +26,7 @@ async function generateImageEvoke(prompt: string, title: string) {
     }
 
     const data = await response.json();
-    console.log("-",JSON.stringify(data))
+    console.log("-", JSON.stringify(data));
     const imageURL = data.body.UUID;
     return imageURL;
   } catch (error) {
@@ -85,10 +85,14 @@ export default async function handler(
     return;
   }
 
-  res.setHeader("Content-Type", "application/json");
-  res.setHeader("Transfer-Encoding", "chunked");
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache, no-transform");
+  res.setHeader("Connection", "keep-alive");
 
-  function getMessagesPrompt(chat:any) {
+  const sendEvent = (data: object) => {
+    res.write(`event: add\ndata: ${JSON.stringify(data)}\n\n`);
+  };
+  function getMessagesPrompt(chat: any) {
     let messages: any[] = [];
 
     chat.map((message: any) => {
@@ -162,9 +166,7 @@ export default async function handler(
           done = doneReading;
           const chunkValue = decoder.decode(value);
           output += chunkValue;
-          res.write(JSON.stringify({ reply: i, message: chunkValue }) + "\n");
-          // @ts-ignore:next-line
-          res.flush();
+          sendEvent({ reply: i, message: chunkValue });
         }
 
         console.log(`${conversation[i + 1].name}: ${output}`);
@@ -175,22 +177,25 @@ export default async function handler(
       }
       //generateImage
       console.log("prompt", conversation[5].message);
-      res.write(
-        JSON.stringify({
-          reply: 6,
-          message: await generateImageEvoke(conversation[5].message, title as string),
-        }) + "\n"
-      );
-      // @ts-ignore:next-line
-      res.flush();
-      res.end();
+      sendEvent({
+        reply: 6,
+        message: await generateImageEvoke(
+          conversation[5].message,
+          title as string
+        ),
+      });
     } catch (error) {
       console.error(error);
     }
   }
 
   // Call the askQuestions function
-  askQuestions();
+  await askQuestions();
+
+  // Clean up when the connection is closed
+  req.on("close", () => {
+    res.end();
+  });
 }
 /*
 
