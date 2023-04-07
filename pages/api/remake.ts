@@ -1,3 +1,7 @@
+export const config = {
+  runtime: "edge",
+};
+
 import { OpenAIStream, OpenAIStreamPayload } from "@/lib/openAIStream";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -188,7 +192,7 @@ export default async function handler(
       console.error(error);
     }
   }
-  sendEvent({ reply: -1, message: 'starting'})
+  sendEvent({ reply: -1, message: "starting" });
   // Call the askQuestions function
   await askQuestions();
 
