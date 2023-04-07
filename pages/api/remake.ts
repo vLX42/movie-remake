@@ -188,7 +188,7 @@ export default async function handler(
       console.error(error);
     }
   }
-
+  sendEvent({ reply: -1, message: 'starting'})
   // Call the askQuestions function
   await askQuestions();
 
