@@ -1,6 +1,3 @@
-export const config = {
-  runtime: "edge",
-};
 
 import { OpenAIStream, OpenAIStreamPayload } from "@/lib/openAIStream";
 import type { NextApiRequest, NextApiResponse } from "next";
