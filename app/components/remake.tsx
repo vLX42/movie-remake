@@ -47,6 +47,7 @@ const Remake = ({
             break;
           case 6:
             setReply4((prevValue) => prevValue + json.message);
+            source.close();
             break;
           default:
             break;
