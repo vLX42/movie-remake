@@ -57,6 +57,7 @@ const Remake = ({
 
 
     source.onerror = (error) => {
+      source.close();
       console.error("Error:", error);
     };
 
