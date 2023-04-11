@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Loader } from "./loader";
 import styles from "./remake.module.css";
+import { ReloadableImage } from "./reload-image";
 
 const TextFormatter = ({
   text,
@@ -80,7 +81,7 @@ const Remake = ({
         <>
           {reply4 ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <ReloadableImage
               src={`/api/getImage?UUID=${reply4}`}
               width="512"
               height="512"
