@@ -8,12 +8,3 @@
   padding-bottom: 10px;
   font-size: 20px;
 }
-
-.loadingImage {
-    background-color: lightgray;
-    width: 512px;
-    height: 512px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}

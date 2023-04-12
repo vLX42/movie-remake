@@ -1,5 +1,5 @@
-"use client";
 import React, { useState } from 'react';
+import { LoadingImage } from './loading-image';
 
 interface ReloadableImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -11,6 +11,7 @@ interface ReloadableImageProps extends React.ImgHTMLAttributes<HTMLImageElement>
 export const ReloadableImage: React.FC<ReloadableImageProps> = ({ src, alt, width, height, ...props }) => {
   const [imageUrl, setImageUrl] = useState<string>(src);
   const [errorCount, setErrorCount] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const handleError = () => {
     if (errorCount < 1) {
@@ -22,7 +23,23 @@ export const ReloadableImage: React.FC<ReloadableImageProps> = ({ src, alt, widt
     }
   };
 
+  const handleLoad = () => {
+    setIsLoading(false);
+  };
+
   return (
-    <img src={imageUrl} alt={alt} onError={handleError} width={width} height={height} {...props} />
+    <>
+      {isLoading && <LoadingImage />}
+      <img
+        src={imageUrl}
+        alt={alt}
+        onError={handleError}
+        onLoad={handleLoad}
+        width={width}
+        height={height}
+        style={{ display: isLoading ? 'none' : 'inline' }}
+        {...props}
+      />
+    </>
   );
 };

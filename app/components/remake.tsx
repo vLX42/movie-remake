@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Loader } from "./loader";
 import styles from "./remake.module.css";
 import { ReloadableImage } from "./reload-image";
+import { LoadingImage } from "./loading-image";
 
 const TextFormatter = ({
   text,
@@ -89,12 +90,7 @@ const Remake = ({
               alt={reply3}
             />
           ) : (
-            <div className={styles.loadingImage}>
-              <h1>
-                Generating poster
-                <Loader />
-              </h1>
-            </div>
+            <LoadingImage />
           )}
         </>
       )}
