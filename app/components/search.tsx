@@ -26,13 +26,12 @@ export const MovieSearchForm: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  console.log("-", pathname);
   const [searchTerm, setSearchTerm] = useState(
     pathname ? decodeURIComponent(pathname.split("/search/")[1] || "") : ""
   );
 
   const debouncedSearchTerm = useCallback(
-    debounce((search) => router.push(`/search/${search}`), 300),
+    debounce((search) => router.push(`/search/${search}`), 100),
     []
   );
 
