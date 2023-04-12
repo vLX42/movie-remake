@@ -2,7 +2,6 @@
 import React from "react";
 import styles from "./styles.module.css";
 import { Archivo_Narrow } from "next/font/google";
-import Image from 'next/image'
 import Link from 'next/link';
 
 interface Movie {
@@ -30,7 +29,7 @@ export async function MovieSearchResult({
           <Link href={`/remake/${movie.id}`} className={styles.movieWrapper} key={movie.id}>
             <div className={styles.movie}>
               <div className={styles.poster}>
-                <Image
+                <img
                   src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
                   alt={movie.title}
                   className={styles.posterImage}

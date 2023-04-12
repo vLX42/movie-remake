@@ -2,7 +2,6 @@
 import React from "react";
 import styles from "./original.module.css";
 import { Archivo_Narrow } from "next/font/google";
-import Image from "next/image";
 import { Configuration, OpenAIApi } from "openai";
 import Remake from "./remake";
 
@@ -59,7 +58,7 @@ export async function OriginalMovie({
       {!!movieData ? (
         <>
           <div className={styles.blurayCover}>
-            <Image
+            <img
               className={styles.coverImage}
               src={`https://image.tmdb.org/t/p/w200${movieData.poster_path}`}
               width="150"
