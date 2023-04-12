@@ -1,7 +1,6 @@
 import "../../globals.css";
 import { Abril_Fatface } from "next/font/google";
 import styles from "../../styles.module.css";
-import Link from "next/link";
 const abril_fatface = Abril_Fatface({ weight: ["400"], subsets: ["latin"] });
 
 export const metadata = {
@@ -19,12 +18,7 @@ export default function RootLayout({
       <h1 className={`${styles.headline} ${abril_fatface.className}`}>
         Hollywood Movie Remake Generator
       </h1>
-
       {children}
-
-      <Link className={`${styles.back} ${abril_fatface.className}`} href="/">
-      ← Generate another
-      </Link>
     </>
   );
 }

@@ -4,6 +4,7 @@ import { Loader } from "./loader";
 import styles from "./remake.module.css";
 import { ReloadableImage } from "./reload-image";
 import { LoadingImage } from "./loading-image";
+import Link from "next/link";
 
 const TextFormatter = ({
   text,
@@ -93,6 +94,11 @@ const Remake = ({
           ) : (
             <LoadingImage />
           )}
+
+
+      <Link className={`${styles.back}`} href="/">
+      ← Generate another
+      </Link>
         </>
       )}
     </div>
