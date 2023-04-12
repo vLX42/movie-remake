@@ -3,6 +3,13 @@
   padding-bottom: 60px;
 }
 
+@media only screen and (max-width: 767px) {
+  /* styles for screens smaller than 768px, which are typically mobile devices */
+  .headline {
+    font-size: 65px;
+  }
+}
+
 .main {
   max-width: 800px;
   width: 100%;
@@ -14,4 +21,12 @@
   .main {
     margin: 20px;
   }
+}
+
+.hr {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+.back {
+  font-size: 25px;
 }

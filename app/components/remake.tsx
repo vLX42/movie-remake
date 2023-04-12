@@ -88,6 +88,7 @@ const Remake = ({
               width="512"
               height="512"
               alt={reply3}
+              className={styles.poster}
             />
           ) : (
             <LoadingImage />
