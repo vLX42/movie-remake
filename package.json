@@ -15,16 +15,20 @@
     "@types/react-dom": "18.0.11",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
+    "eventsource-parser": "1.0.0",
     "framer-motion": "10.9.1",
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
     "next": "13.2.4",
+    "next-connect": "0.13.0",
+    "openai": "3.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "server-only": "^0.0.1",
-    "typescript": "5.0.2",
-    "eventsource-parser": "1.0.0",
-    "openai": "3.2.1",
-    "next-connect": "0.13.0"
+    "typescript": "5.0.2"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20230404.0",
+    "wrangler": "^2.15.0"
   }
 }

@@ -1,0 +1,7 @@
+name = "movie-remake"
+main = "src/index.ts"
+compatibility_date = "2023-04-11"
+usage_model = "bundled"
+
+[triggers]
+crons = [ ]
