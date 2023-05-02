@@ -248,7 +248,7 @@ async function askQuestions(title, releaseDate, movieId, writable) {
         const movieData = {
           title: conversation[3].message,
           description: conversation[1].message,
-          imageURL: imageURLInCloudflare,
+          imageUrl: imageURLInCloudflare,
         };
         await MOVIE_DATA.put(movieId, JSON.stringify(movieData));
       }

@@ -94,7 +94,7 @@ const Remake = ({
         <>
           {reply4 || imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <>
+            <>{imageUrl}
               {imageUrl ? (
                 <img
                   src={imageUrl}
