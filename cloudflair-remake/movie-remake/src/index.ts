@@ -1,23 +1,21 @@
 import { createParser } from "eventsource-parser";
 
-
 addEventListener("fetch", (event) => {
   event.respondWith(fetchAndApply(event.request));
 });
 
-async function downloadImageWithRetry(imageURL, retries = 1, delay = 5000) {
+async function downloadImageWithRetry(imageURL, retries = 3, delay = 2000) {
   for (let i = 0; i <= retries; i++) {
     try {
       const response = await fetch(imageURL);
       if (response.ok) {
-        return response;
+        const imageData = await response.arrayBuffer();
+        return imageData;
       }
     } catch (error) {
-      // Log the error and continue
       console.error(`Attempt ${i} failed: ${error.message}`);
     }
 
-    // Wait for the delay before trying again
     if (i < retries) {
       await new Promise((resolve) => setTimeout(resolve, delay));
     }
@@ -192,9 +190,10 @@ async function askQuestions(title, releaseDate, movieId, writable) {
       conversation[i + 1].message = output.trim();
     }
 
+    const imageUUID = await generateImageEvoke(conversation[5].message, title);
     await sendEvent(writer, {
       reply: 6,
-      message: await generateImageEvoke(conversation[5].message, title),
+      message: imageUUID,
     });
 
     const response = await fetch(
@@ -205,8 +204,8 @@ async function askQuestions(title, releaseDate, movieId, writable) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          token: process.env.EVOKE_AUTH_TOKEN,
-          UUID: conversation[6].message,
+          token: EVOKE_AUTH_TOKEN,
+          UUID: imageUUID,
         }),
       }
     );
@@ -219,29 +218,46 @@ async function askQuestions(title, releaseDate, movieId, writable) {
 
     const imageResponse = await downloadImageWithRetry(imageUrl);
     if (imageResponse) {
-      // Store the image in Cloudflare Images
-      const storeResponse = await fetch(
-        `https://api.cloudflare.com/client/v4/accounts/${IMAGES_ACCOUNT_ID}/images/v1`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/octet-stream",
-            "Authorization": `Bearer ${IMAGES_TOKEN}`
-          },
-          body: imageResponse.body,
-        }
-      );
+      let storeResponse;
+      try {
+        // Store the image in Cloudflare Images
+
+        const formData = new FormData();
+        const blob = new Blob([imageResponse], { type: "image/png" }); // Adjust the MIME type according to the image format
+        formData.append("file", blob, movieId);
+        formData.append("requireSignedURLs", false);
+
+
+        storeResponse = await fetch(
+          `https://api.cloudflare.com/client/v4/accounts/${IMAGES_ACCOUNT_ID}/images/v1`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${IMAGES_TOKEN}`,
+            },
+            body: formData,
+          }
+        );
+      } catch (error) {
+        throw new Error(`Failed ${error}`);
+      }
 
       if (storeResponse.ok) {
         const storeResponseData = await storeResponse.json();
-        const imageURLInCloudflare = storeResponseData.result.variants[0].url;
-
+        const imageURLInCloudflare = storeResponseData.result.variants[0];
         const movieData = {
           title: conversation[3].message,
           description: conversation[1].message,
           imageURL: imageURLInCloudflare,
         };
         await MOVIE_DATA.put(movieId, JSON.stringify(movieData));
+      }
+      else
+      {
+        const errorText = await storeResponse.text();
+        throw new Error(
+          `Failed response ${storeResponse.status} (${storeResponse.statusText}): ${errorText}`
+        );
       }
     }
     writer.close();
@@ -281,11 +297,9 @@ async function fetchAndApply(request) {
   // Check if the data is already in the KV store
   const existingData = await MOVIE_DATA.get(movieId);
   if (existingData) {
-    const { title, description, imageURL } = JSON.parse(existingData);
-    return new Response(
-      `Image URL: ${imageURL}\nTitle: ${title}\nDescription: ${description}`,
-      { status: 200 }
-    );
+    const data = JSON.parse(existingData);
+    let writer = writable.getWriter();
+    await sendEvent(writer, { reply: 7, message: data });
   }
 
   askQuestions(title, releaseDate, movieId, writable);

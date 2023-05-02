@@ -35,30 +35,38 @@ const Remake = ({
   const [reply4, setReply4] = useState("");
 
   useEffect(() => {
-    const source = new EventSource( `https://movie-remake.cloudflare1490.workers.dev/?dd=xx&releaseDate=${releaseDate}&title=${title}&movieId=${movieId}`);
+    const source = new EventSource(
+      `https://movie-remake.cloudflare1490.workers.dev/?dd=xx&releaseDate=${releaseDate}&title=${title}&movieId=${movieId}`
+    );
 
     source.addEventListener("add", (e: any) => {
-
-        const json = JSON.parse(e.data);
-        switch (json.reply) {
-          case 0:
-            setReply1((prevValue) => prevValue + json.message);
-            break;
-          case 2:
-            setReply2((prevValue) => prevValue + json.message);
-            break;
-          case 4:
-            setReply3((prevValue) => prevValue + json.message);
-            break;
-          case 6:
-            setReply4((prevValue) => prevValue + json.message);
-            source.close();
-            break;
-          default:
-            break;
-        }
+      const json = JSON.parse(e.data);
+      switch (json.reply) {
+        case 0:
+          setReply1((prevValue) => prevValue + json.message);
+          break;
+        case 2:
+          setReply2((prevValue) => prevValue + json.message);
+          break;
+        case 4:
+          setReply3((prevValue) => prevValue + json.message);
+          break;
+        case 6:
+          setReply4((prevValue) => prevValue + json.message);
+          source.close();
+          break;
+        case 7:
+          const jsonData = JSON.parse(json.message);
+          setReply1(jsonData.description);
+          setReply2(jsonData.title);
+          setReply3(jsonData.title);
+          setReply4(jsonData.imageUrl);
+          source.close();
+          break;
+        default:
+          break;
+      }
     });
-
 
     source.onerror = (error) => {
       source.close();
@@ -97,10 +105,9 @@ const Remake = ({
             <LoadingImage />
           )}
 
-
-      <Link className={`${styles.back}`} href="/">
-      ← Generate another
-      </Link>
+          <Link className={`${styles.back}`} href="/">
+            ← Generate another
+          </Link>
         </>
       )}
     </div>
