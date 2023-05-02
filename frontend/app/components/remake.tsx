@@ -33,7 +33,7 @@ const Remake = ({
   const [reply2, setReply2] = useState("");
   const [reply3, setReply3] = useState("");
   const [reply4, setReply4] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState();
 
   useEffect(() => {
     const source = new EventSource(
@@ -92,7 +92,7 @@ const Remake = ({
 
       {reply3 && (
         <>
-          {reply4 || imageUrl ? (
+          {(reply4 || imageUrl) ? (
             // eslint-disable-next-line @next/next/no-img-element
             <ReloadableImage
               src={imageUrl ? imageUrl : `/api/getImage?UUID=${reply4}`}
