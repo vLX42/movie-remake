@@ -92,7 +92,7 @@ const Remake = ({
 
       {reply3 && (
         <>
-          {reply4 ? (
+          {reply4 || imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <ReloadableImage
               src={imageUrl ? imageUrl : `/api/getImage?UUID=${reply4}`}
