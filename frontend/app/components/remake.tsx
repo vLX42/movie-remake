@@ -56,11 +56,10 @@ const Remake = ({
           source.close();
           break;
         case 7:
-          const jsonData = JSON.parse(json.message);
-          setReply1(jsonData.description);
-          setReply2(jsonData.title);
-          setReply3(jsonData.title);
-          setReply4(jsonData.imageUrl);
+          setReply1(json.message.description);
+          setReply2(json.message.title);
+          setReply3(json.message.title);
+          setReply4(json.message.imageUrl);
           source.close();
           break;
         default:
