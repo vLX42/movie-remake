@@ -81,7 +81,6 @@ const askQuestions = async (title, releaseDate, responseStream) => {
         responseStream.write({ reply: i, message: chunkValue });
       }
 
-      console.log(`${conversation[i + 1].name}: ${output}`);
       conversation[i + 1].message = output.trim();
     }
 

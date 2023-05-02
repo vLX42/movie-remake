@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 async function generateImageEvoke(prompt: string, title: string) {
   try {
-    console.log("generate image");
+
     const response = await fetch(
       "https://xarrreg662.execute-api.us-east-1.amazonaws.com/sdAddEle",
       {
@@ -27,7 +27,7 @@ async function generateImageEvoke(prompt: string, title: string) {
     }
 
     const data = await response.json();
-    console.log("-", JSON.stringify(data));
+
     const imageURL = data.body.UUID;
     return imageURL;
   } catch (error) {
@@ -170,14 +170,10 @@ export default async function handler(
           sendEvent({ reply: i, message: chunkValue });
         }
 
-        console.log(`${conversation[i + 1].name}: ${output}`);
-
         // Save the AI's response to the conversation history
         conversation[i + 1].message = output.trim();
-        console.log(conversation.slice(0, i + 1));
       }
       //generateImage
-      console.log("prompt", conversation[5].message);
       sendEvent({
         reply: 6,
         message: await generateImageEvoke(
@@ -198,103 +194,3 @@ export default async function handler(
     res.end();
   });
 }
-/*
-
-
-  function getMessagesPrompt(chat) {
-    let messages = [];
-
-
-
-    chat.map((message) => {
-      const role = message.name == "Me" ? "user" : "assistant";
-      const m = { role: role, content: message.message };
-      messages.push(m);
-    });
-
-    return messages;
-  }
-
-
-
-    async function askQuestions() {
-      try {
-        // Define your OpenAI API key
-        const apiKey = 'YOUR_API_KEY';
-
-        // Define the conversation history as an array of objects
-        const conversation = [
-          {
-            name: 'Me',
-            message: `Make a moderen remake of the movie: "${movieData.title}" from ${movieData.release_date}
-            Update it for a modern audience, make it: woke, lgbt, diversity and add some inclusion to the plot.
-            Gender swap the main charater, if the charater is male. Give me a movie synopsis, with the name of the actors, use present actors, don't use: Zendaya`,
-          },
-          {
-            name: 'AI',
-            message: '',
-          },
-          {
-            name: 'Me',
-            message: "What it the title of the move. Return title only",
-          },
-          {
-            name: 'AI',
-            message: '',
-          },
-          {
-            name: 'Me',
-            message: `Make a AI image generation prompt for a charater poster of the main charater, name the actor, describe clothing and style in great detail, don't include the movie name, include description of main element of the movie for the background, no copyrighted names, don't use words like AI or Generate, make the response short, max 80 words`,
-          },
-          {
-            name: 'AI',
-            message: '',
-          },
-        ];
-    
-        // Loop through each message in the conversation
-        for (let i = 0; i < conversation.length; i += 2) {
-          // Define the prompt as the previous message from the AI plus the current message from Me
-          const prompt = conversation[i].message + ' ' + conversation[i + 1].message;
-
-
-          // Define the payload for the OpenAIStream function
-          const payload: OpenAIStreamPayload = {
-            model: "gpt-3.5-turbo",
-            messages: getMessagesPrompt(conversation.slice(0, i+1)),
-            temperature: 0.9,
-            presence_penalty: 0.6,
-            max_tokens: 340,
-            stream: true,
-          };
-    
-          // Call the OpenAIStream function with the payload and API key
-          const stream = await OpenAIStream(payload);
-          const reader = stream?.getReader();
-          const decoder = new TextDecoder();
-          let output = "";
-          let done = false;
-        
-          while (!done) {
-            const { value, done: doneReading } = await reader?.read();
-            done = doneReading;
-            const chunkValue = decoder.decode(value);
-            output += chunkValue;
-          }
-        
-          console.log(`${conversation[i + 1].name}: ${output}`);
-    
-          // Save the AI's response to the conversation history
-          conversation[i + 1].message = output.trim();
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    
-    // Call the askQuestions function
-    askQuestions();
-
-
-
-*/

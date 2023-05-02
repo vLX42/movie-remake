@@ -6,7 +6,6 @@ let fetch;
 
 async function generateImageEvoke(prompt, title) {
     try {
-      console.log("generate image");
       const response = await fetch(
         "https://xarrreg662.execute-api.us-east-1.amazonaws.com/sdAddEle",
         {
@@ -31,7 +30,7 @@ async function generateImageEvoke(prompt, title) {
       }
   
       const data = await response.json();
-      console.log("-", JSON.stringify(data));
+
       const imageURL = data.body.UUID;
       return imageURL;
     } catch (error) {

@@ -1,12 +1,32 @@
 import { createParser } from "eventsource-parser";
 
+
 addEventListener("fetch", (event) => {
   event.respondWith(fetchAndApply(event.request));
 });
 
+async function downloadImageWithRetry(imageURL, retries = 1, delay = 5000) {
+  for (let i = 0; i <= retries; i++) {
+    try {
+      const response = await fetch(imageURL);
+      if (response.ok) {
+        return response;
+      }
+    } catch (error) {
+      // Log the error and continue
+      console.error(`Attempt ${i} failed: ${error.message}`);
+    }
+
+    // Wait for the delay before trying again
+    if (i < retries) {
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+  throw new Error("Failed to download image after retries");
+}
+
 async function generateImageEvoke(prompt, title) {
   try {
-    console.log("generate image");
     const response = await fetch(
       "https://xarrreg662.execute-api.us-east-1.amazonaws.com/sdAddEle",
       {
@@ -15,7 +35,7 @@ async function generateImageEvoke(prompt, title) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          token: process.env.EVOKE_AUTH_TOKEN,
+          token: EVOKE_AUTH_TOKEN,
           prompt: `BOOK COVER STYLE, ${prompt}. Movie poster STYLE, action shot, include face, highly detailed 8k --ar 9:18`,
           negative_prompt:
             "bad anatomy, bad proportions, blurry, cloned face, cropped, deformed, dehydrated, disfigured, duplicate, error, extra arms, extra fingers, extra legs, extra limbs, fused fingers, gross proportions, jpeg artifacts, long neck, low quality, lowres, malformed limbs, missing arms, missing legs, morbid, mutated hands, mutation, mutilated, out of frame, poorly drawn face, poorly drawn hands, signature, text, too many fingers, ugly, username, watermark, worst quality.",
@@ -31,7 +51,7 @@ async function generateImageEvoke(prompt, title) {
     }
 
     const data = await response.json();
-    console.log("-", JSON.stringify(data));
+
     const imageURL = data.body.UUID;
     return imageURL;
   } catch (error) {
@@ -59,7 +79,7 @@ async function OpenAIStream(payload) {
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      Authorization: `Bearer ${OPENAI_API_KEY}`,
     },
     method: "POST",
     body: JSON.stringify(payload),
@@ -101,13 +121,12 @@ async function OpenAIStream(payload) {
 }
 
 async function sendEvent(writer, data) {
-  console.log("send", data);
   let encoder = new TextEncoder();
   await writer.write(encoder.encode(`event: add\n`));
   await writer.write(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
 }
 
-async function askQuestions(title, releaseDate, writable) {
+async function askQuestions(title, releaseDate, movieId, writable) {
   let writer = writable.getWriter();
   try {
     const conversation = [
@@ -148,11 +167,11 @@ async function askQuestions(title, releaseDate, writable) {
 
     for (let i = 0; i < conversation.length; i += 2) {
       const payload = {
-        model: "gpt-3.5-turbo",
+        model: "gpt-4",
         messages: getMessagesPrompt(conversation.slice(0, i + 1)),
         temperature: 0.9,
         presence_penalty: 0.6,
-        max_tokens: 340,
+        max_tokens: 555,
         stream: true,
       };
 
@@ -170,7 +189,6 @@ async function askQuestions(title, releaseDate, writable) {
         await sendEvent(writer, { reply: i, message: chunkValue });
       }
 
-      console.log(`${conversation[i + 1].name}: ${output}`);
       conversation[i + 1].message = output.trim();
     }
 
@@ -179,6 +197,53 @@ async function askQuestions(title, releaseDate, writable) {
       message: await generateImageEvoke(conversation[5].message, title),
     });
 
+    const response = await fetch(
+      "https://qrlh34e4y6.execute-api.us-east-1.amazonaws.com/sdCheckEle",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: process.env.EVOKE_AUTH_TOKEN,
+          UUID: conversation[6].message,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Error fetching image: ${response.statusText}`);
+    }
+
+    const { body: imageUrl } = await response.json();
+
+    const imageResponse = await downloadImageWithRetry(imageUrl);
+    if (imageResponse) {
+      // Store the image in Cloudflare Images
+      const storeResponse = await fetch(
+        `https://api.cloudflare.com/client/v4/accounts/${IMAGES_ACCOUNT_ID}/images/v1`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/octet-stream",
+            "Authorization": `Bearer ${IMAGES_TOKEN}`
+          },
+          body: imageResponse.body,
+        }
+      );
+
+      if (storeResponse.ok) {
+        const storeResponseData = await storeResponse.json();
+        const imageURLInCloudflare = storeResponseData.result.variants[0].url;
+
+        const movieData = {
+          title: conversation[3].message,
+          description: conversation[1].message,
+          imageURL: imageURLInCloudflare,
+        };
+        await MOVIE_DATA.put(movieId, JSON.stringify(movieData));
+      }
+    }
     writer.close();
 
     return conversation;
@@ -204,16 +269,26 @@ async function fetchAndApply(request) {
   const url = new URL(request.url);
   const title = url.searchParams.get("title");
   const releaseDate = url.searchParams.get("releaseDate");
-  console.log({ url: request.url.search, test: "test", title, releaseDate });
-  if (!title || !releaseDate) {
+  const movieId = url.searchParams.get("movieId");
+
+  if (!title || !releaseDate || !movieId) {
     return new Response(readable, init, {
       status: 400,
       statusText: "bad request",
-      body: "Title or releaseDate is missing",
+      body: "Title, releaseDate or MovieId is missing",
     });
   }
-  console.log("sss");
-  askQuestions(title, releaseDate, writable);
-  console.log("xxx");
+  // Check if the data is already in the KV store
+  const existingData = await MOVIE_DATA.get(movieId);
+  if (existingData) {
+    const { title, description, imageURL } = JSON.parse(existingData);
+    return new Response(
+      `Image URL: ${imageURL}\nTitle: ${title}\nDescription: ${description}`,
+      { status: 200 }
+    );
+  }
+
+  askQuestions(title, releaseDate, movieId, writable);
+
   return new Response(readable, init);
 }

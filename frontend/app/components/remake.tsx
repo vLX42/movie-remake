@@ -23,9 +23,11 @@ const TextFormatter = ({
 const Remake = ({
   releaseDate,
   title,
+  movieId,
 }: {
   releaseDate: string;
   title: string;
+  movieId: number;
 }) => {
   const [reply1, setReply1] = useState("");
   const [reply2, setReply2] = useState("");
@@ -33,10 +35,10 @@ const Remake = ({
   const [reply4, setReply4] = useState("");
 
   useEffect(() => {
-    const source = new EventSource( `https://movie-remake.cloudflare1490.workers.dev/?dd=xx&releaseDate=${releaseDate}&title=${title}`);
+    const source = new EventSource( `https://movie-remake.cloudflare1490.workers.dev/?dd=xx&releaseDate=${releaseDate}&title=${title}&movieId=${movieId}`);
 
     source.addEventListener("add", (e: any) => {
-        console.log(e)
+
         const json = JSON.parse(e.data);
         switch (json.reply) {
           case 0:

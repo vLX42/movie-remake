@@ -71,7 +71,7 @@ export async function OriginalMovie({
       ) : (
         <MovieCoverSkeleton />
       )}
-      <Remake title={movieData.title} releaseDate={movieData.release_date} />
+      <Remake title={movieData.title} releaseDate={movieData.release_date} movieId={movieData.id} />
     </div>
   );
 }
