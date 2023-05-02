@@ -92,15 +92,27 @@ const Remake = ({
 
       {reply3 && (
         <>
-          {(reply4 || imageUrl) ? (
+          {reply4 || imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <ReloadableImage
-              src={imageUrl ? imageUrl : `/api/getImage?UUID=${reply4}`}
-              width="512"
-              height="512"
-              alt={reply3}
-              className={styles.poster}
-            />
+            <>
+              {imageUrl ? (
+                <img
+                  src={`/api/getImage?UUID=${reply4}`}
+                  width="512"
+                  height="512"
+                  alt={reply3}
+                  className={styles.poster}
+                />
+              ) : (
+                <ReloadableImage
+                  src={`/api/getImage?UUID=${reply4}`}
+                  width="512"
+                  height="512"
+                  alt={reply3}
+                  className={styles.poster}
+                />
+              )}
+            </>
           ) : (
             <LoadingImage />
           )}
