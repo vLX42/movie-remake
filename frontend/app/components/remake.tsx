@@ -60,7 +60,7 @@ const Remake = ({
           setReply1(json.message.description);
           setReply2(json.message.title);
           setReply3(json.message.title);
-          setImageUrl(json.message.imageUrl);
+          setImageUrl(json.message.imageURL);
           source.close();
           break;
         default:
@@ -88,31 +88,20 @@ const Remake = ({
           </>
         )}
       </h1>
+
       <TextFormatter text={reply1} className={styles.description} />
-      {imageUrl}
       {reply3 && (
         <>
           {reply4 || imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <>
-              {imageUrl ? (
-                <img
-                  src={imageUrl}
-                  width="512"
-                  height="512"
-                  alt={reply3}
-                  className={styles.poster}
-                />
-              ) : (
-                <ReloadableImage
-                  src={`/api/getImage?UUID=${reply4}`}
-                  width="512"
-                  height="512"
-                  alt={reply3}
-                  className={styles.poster}
-                />
-              )}
-            </>
+
+            <ReloadableImage
+              src={imageUrl ? imageUrl : `/api/getImage?UUID=${reply4}`}
+              width="512"
+              height="512"
+              alt={reply3}
+              className={styles.poster}
+            />
           ) : (
             <LoadingImage />
           )}
