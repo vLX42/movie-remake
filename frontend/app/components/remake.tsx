@@ -33,6 +33,7 @@ const Remake = ({
   const [reply2, setReply2] = useState("");
   const [reply3, setReply3] = useState("");
   const [reply4, setReply4] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
     const source = new EventSource(
@@ -59,7 +60,7 @@ const Remake = ({
           setReply1(json.message.description);
           setReply2(json.message.title);
           setReply3(json.message.title);
-          setReply4(json.message.imageUrl);
+          setImageUrl(json.message.imageUrl);
           source.close();
           break;
         default:
@@ -94,7 +95,7 @@ const Remake = ({
           {reply4 ? (
             // eslint-disable-next-line @next/next/no-img-element
             <ReloadableImage
-              src={`/api/getImage?UUID=${reply4}`}
+              src={imageUrl ? imageUrl : `/api/getImage?UUID=${reply4}`}
               width="512"
               height="512"
               alt={reply3}
