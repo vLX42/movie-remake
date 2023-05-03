@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Loader } from "./loader";
 import styles from "./remake.module.css";
 import { ReloadableImage } from "./reload-image";
@@ -20,6 +20,10 @@ const TextFormatter = ({
   return <div className={className}>{paragraphs}</div>;
 };
 
+interface TypewriterProps {
+  delay?: number;
+}
+
 const Remake = ({
   releaseDate,
   title,
@@ -34,6 +38,29 @@ const Remake = ({
   const [reply3, setReply3] = useState("");
   const [reply4, setReply4] = useState("");
   const [imageUrl, setImageUrl] = useState();
+
+  const delayedSetReply1 = useCallback((newText: string, delay: number = 100) => {
+    const words = newText.split(' ');
+    let currentIndex = 0;
+
+    const updateWordByWord = () => {
+      setReply1((prevText) => {
+        if (currentIndex < words.length) {
+          return prevText === '' ? words[currentIndex] : prevText + ' ' + words[currentIndex];
+        }
+        return prevText;
+      });
+      currentIndex++;
+      if (currentIndex <= words.length) {
+        setTimeout(updateWordByWord, delay);
+      }
+    };
+
+    updateWordByWord();
+  }, []);
+
+
+
 
   useEffect(() => {
     const source = new EventSource(
@@ -57,7 +84,7 @@ const Remake = ({
           source.close();
           break;
         case 7:
-          setReply1(json.message.description);
+          delayedSetReply1(json.message.description,100);
           setReply2(json.message.title);
           setReply3(json.message.title);
           setImageUrl(json.message.imageURL);

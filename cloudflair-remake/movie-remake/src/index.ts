@@ -4,7 +4,7 @@ addEventListener("fetch", (event) => {
   event.respondWith(fetchAndApply(event.request));
 });
 
-async function downloadImageWithRetry(imageURL, retries = 3, delay = 2000) {
+async function downloadImageWithRetry(imageURL, retries = 5, delay = 1000) {
   for (let i = 0; i <= retries; i++) {
     try {
       const response = await fetch(imageURL);
@@ -130,12 +130,14 @@ async function askQuestions(title, releaseDate, movieId, writable) {
     const conversation = [
       {
         name: "Me",
-        message: `Create a modern version of the movie called "${title}" that was released in ${releaseDate}?
+        message: `Create a modern version of the movie called "${title}" that was released in ${releaseDate}.
         The updated the plot for a modern audience by including themes of woke-ness, LGBT representation, diversity, and inclusion into the plot.
-        If the main character in the original movie is male, please consider gender-swapping the character.
+        Include fan-service if possible with original cast members for a small unimportant cameo.
+        If the main character in the original movie is male, please consider gender-swapping or racebending the character.
         Find new actors for the different roles, they should look  like the original actors. Also consider actors that are not known for mainstream movies. Don't use: Zendaya, Emma Stone, Michael B. Jordan.
-        Write a medium lenght synopsis of the movie, without revealing its title.
-        Including the names of the new actors`,
+        Write a maximum 400 word synopsis of the movie.
+        Don't write the title of the new movie.
+        Including the names of the new actors.`,
       },
       {
         name: "AI",
@@ -169,7 +171,7 @@ async function askQuestions(title, releaseDate, movieId, writable) {
         messages: getMessagesPrompt(conversation.slice(0, i + 1)),
         temperature: 0.9,
         presence_penalty: 0.6,
-        max_tokens: 555,
+        max_tokens: 605,
         stream: true,
       };
 
