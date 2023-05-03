@@ -39,7 +39,7 @@ const Remake = ({
   const [reply4, setReply4] = useState("");
   const [imageUrl, setImageUrl] = useState();
 
-  const delayedSetReply1 = useCallback((newText: string, delay: number = 100) => {
+  const delayedSetReply1 = useCallback((newText: string, delay: number = 50) => {
     const words = newText.split(' ');
     let currentIndex = 0;
 
@@ -84,7 +84,7 @@ const Remake = ({
           source.close();
           break;
         case 7:
-          delayedSetReply1(json.message.description,100);
+          delayedSetReply1(json.message.description,50);
           setReply2(json.message.title);
           setReply3(json.message.title);
           setImageUrl(json.message.imageURL);
