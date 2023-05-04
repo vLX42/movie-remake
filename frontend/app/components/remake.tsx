@@ -36,7 +36,6 @@ const Remake = ({
   const [description, setDescription] = useState("");
   const [remakeTitle, setRemakeTitle] = useState("");
   const [imagePrompt, setImagePrompt] = useState("");
-  const [imageUUID, setImageUUID] = useState("");
   const [imageUrl, setImageUrl] = useState();
 
   const delayedsetDescription = useCallback(
@@ -121,11 +120,11 @@ const Remake = ({
       <TextFormatter text={description} className={styles.description} />
       {imagePrompt && (
         <>
-          {imageUUID || imageUrl ? (
+          {imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
 
             <ReloadableImage
-              src={imageUrl ? imageUrl : `/api/getImage?UUID=${imageUUID}`}
+              src={imageUrl}
               width="512"
               height="512"
               alt={imagePrompt}
