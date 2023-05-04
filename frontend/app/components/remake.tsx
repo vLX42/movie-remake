@@ -38,30 +38,31 @@ const Remake = ({
   const [imagePrompt, setImagePrompt] = useState("");
   const [imageUrl, setImageUrl] = useState();
 
-  const delayedsetDescription = useCallback(
-    (newText: string, delay: number = 25) => {
-      const words = newText.split(" ");
+  const delayedSetDescription = useCallback(
+    (newText: string, delay: number = 200) => {
+      const sentences = newText.split(/(?<=\. |\? |\! )/);
       let currentIndex = 0;
-
-      const updateWordByWord = () => {
+  
+      const updateSentenceBySentence = () => {
         setDescription((prevText) => {
-          if (currentIndex < words.length) {
+          if (currentIndex < sentences.length) {
             return prevText === ""
-              ? words[currentIndex]
-              : prevText + " " + words[currentIndex];
+              ? sentences[currentIndex]
+              : prevText + sentences[currentIndex];
           }
           return prevText;
         });
         currentIndex++;
-        if (currentIndex <= words.length) {
-          setTimeout(updateWordByWord, delay);
+        if (currentIndex <= sentences.length) {
+          setTimeout(updateSentenceBySentence, delay);
         }
       };
-
-      updateWordByWord();
+  
+      updateSentenceBySentence();
     },
     []
   );
+
 
   useEffect(() => {
     const source = new EventSource(
@@ -85,7 +86,7 @@ const Remake = ({
           source.close();
           break;
         case 7:
-          delayedsetDescription(json.message.description, 25);
+          delayedSetDescription(json.message.description, 200);
           setRemakeTitle(json.message.title);
           setImagePrompt(json.message.title);
           setImageUrl(json.message.imageURL);
