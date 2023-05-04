@@ -19,5 +19,6 @@
 }
 
 .back {
+  clear: both;
   font-size: 25px;
 }
