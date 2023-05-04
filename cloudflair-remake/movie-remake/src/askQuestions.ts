@@ -1,5 +1,5 @@
 import { downloadImageWithRetry } from "./downloadImage";
-import { generateImageEvoke } from "./imageGeneration";
+import { generateImageReplicate } from "./imageGeneration";
 import { getMessagesPrompt, sendEvent } from "./messageHandling";
 import { OpenAIStream } from "./openAIStream";
 

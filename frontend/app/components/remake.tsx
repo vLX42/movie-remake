@@ -40,7 +40,7 @@ const Remake = ({
   const [imageUrl, setImageUrl] = useState();
 
   const delayedsetDescription = useCallback(
-    (newText: string, delay: number = 50) => {
+    (newText: string, delay: number = 25) => {
       const words = newText.split(" ");
       let currentIndex = 0;
 
@@ -82,11 +82,11 @@ const Remake = ({
           setImagePrompt((prevValue) => prevValue + json.message);
           break;
         case 6:
-          setImageUrl((prevValue) => prevValue + json.message);
+          setImageUrl(json.message);
           source.close();
           break;
         case 7:
-          delayedsetDescription(json.message.description, 50);
+          delayedsetDescription(json.message.description, 25);
           setRemakeTitle(json.message.title);
           setImagePrompt(json.message.title);
           setImageUrl(json.message.imageURL);

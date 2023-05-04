@@ -1,11 +1,10 @@
 {
-    "name": "my-worker",
-    "dependencies": {
-        "eventsource-parser": "^1.0.0",
-        "replicate": "0.11.1"
-    },
-    "devDependencies": {
-        "@cloudflare/workers-types": "^4.20230419.0",
-        "typescript": "^5.0.4"
-    }
+  "name": "my-worker",
+  "dependencies": {
+    "eventsource-parser": "^1.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20230419.0",
+    "typescript": "^5.0.4"
+  }
 }
