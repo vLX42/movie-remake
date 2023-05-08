@@ -83,14 +83,14 @@ const Remake = ({
           break;
         case 6:
           setImageUrl(json.message);
-          source.close();
+          // source.close();
           break;
         case 7:
           delayedSetDescription(json.message.description, 200);
           setRemakeTitle(json.message.title);
           setImagePrompt(json.message.title);
           setImageUrl(json.message.imageURL);
-          source.close();
+          // source.close();
           break;
         default:
           break;

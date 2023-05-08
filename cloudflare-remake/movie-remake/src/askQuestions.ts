@@ -13,6 +13,8 @@ export async function askQuestions(title, releaseDate, movieId, writable) {
         name: "Me",
         message: `Create a modern version of the movie called "${title}" that was released in ${releaseDate}.
 
+        Write a maximum 275 word synopsis of the movie.
+
         The updated the plot for a modern audience by including 2-3 of these topics to the plot:
         1. Diverse casting: Remakes feature more diverse casts, promoting representation on screen.
         2. Updated references: Cultural references, jokes, or language are modernized for today's audience.
@@ -28,9 +30,7 @@ export async function askQuestions(title, releaseDate, movieId, writable) {
         Include fan-service if possible with original cast members for a small unimportant cameo.
         
         Find new actors for the different roles, they should look  like the original actors. Also consider actors that are not known for mainstream movies. Also include tv-show actors if they fit the role. Only one famos actor.
-        
-        Write a maximum 350 word synopsis of the movie.
-        
+
         Don't write the title of the new movie.
         
         Including the names of the new actors, plus what they know for.`,
@@ -96,64 +96,82 @@ export async function askQuestions(title, releaseDate, movieId, writable) {
       conversation[i + 1].message = output.trim();
     }
 
-    const imageUrl = await generateImageReplicate(conversation[5].message, title);
+    await sendEvent(writer, {
+      reply: 5,
+      message: conversation[5].message,
+    });
+    const imageUrl = await generateImageReplicate(
+      conversation[5].message,
+      title
+    );
     await sendEvent(writer, {
       reply: 6,
       message: imageUrl,
     });
 
+    try {
+      await sendEvent(writer,  { reply: 8, message: `get image${imageUrl}` })
+      const imageResponse = await downloadImageWithRetry(
+        imageUrl,
+        10,
+        500,
+        writer
+      );
+      await sendEvent(writer,  { reply: 8, message: `done getting image${imageUrl}` })
+      if (imageResponse) {
+        let storeResponse;
+        try {
+          // Store the image in Cloudflare Images
 
-    const imageResponse = await downloadImageWithRetry(imageUrl);
-    if (imageResponse) {
-      let storeResponse;
-      try {
-        // Store the image in Cloudflare Images
+          const formData = new FormData();
+          const blob = new Blob([imageResponse], { type: "image/png" }); // Adjust the MIME type according to the image format
+          formData.append("file", blob, movieId);
+          formData.append("requireSignedURLs", false);
+          sendEvent(writer,  { reply: 8, message: "send image" })
+          storeResponse = await fetch(
+            `https://api.cloudflare.com/client/v4/accounts/${IMAGES_ACCOUNT_ID}/images/v1`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${IMAGES_TOKEN}`,
+              },
+              body: formData,
+            }
+          );
+          sendEvent(writer,  { reply: 8, message: "send image ok" })
+        } catch (error) {
+          console.log(`Failed ${error}`);
+          await sendEvent(writer, { reply: 10, message: error });
+          return `Failed ${error}`;
+        }
 
-        const formData = new FormData();
-        const blob = new Blob([imageResponse], { type: "image/png" }); // Adjust the MIME type according to the image format
-        formData.append("file", blob, movieId);
-        formData.append("requireSignedURLs", false);
-
-        storeResponse = await fetch(
-          `https://api.cloudflare.com/client/v4/accounts/${IMAGES_ACCOUNT_ID}/images/v1`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${IMAGES_TOKEN}`,
-            },
-            body: formData,
-          }
-        );
-      } catch (error) {
-        console.log(`Failed ${error}`)
-        throw new Error(`Failed ${error}`);
+        if (storeResponse.ok) {
+          const storeResponseData = await storeResponse.json();
+          const imageURLInCloudflare = storeResponseData.result.variants[0];
+          const movieData = {
+            originalTitle: title,
+            title: conversation[3].message,
+            description: conversation[1].message,
+            imageURL: imageURLInCloudflare,
+          };
+          await MOVIE_DATA.put(movieId, JSON.stringify(movieData));
+        } else {
+          const errorText = await storeResponse.text();
+          console.error(
+            `Failed response ${storeResponse.status} (${storeResponse.statusText}): ${errorText}`
+          );
+          return `Failed response ${storeResponse.status} (${storeResponse.statusText}): ${errorText}`;
+        }
       }
+      writer.close();
 
-      if (storeResponse.ok) {
-        const storeResponseData = await storeResponse.json();
-        const imageURLInCloudflare = storeResponseData.result.variants[0];
-        const movieData = {
-          originalTitle: title,
-          title: conversation[3].message,
-          description: conversation[1].message,
-          imageURL: imageURLInCloudflare,
-        };
-        await MOVIE_DATA.put(movieId, JSON.stringify(movieData));
-      } else {
-        const errorText = await storeResponse.text();
-        console.error(
-          `Failed response ${storeResponse.status} (${storeResponse.statusText}): ${errorText}`
-        )
-        throw new Error(
-          `Failed response ${storeResponse.status} (${storeResponse.statusText}): ${errorText}`
-        );
-      }
+      return conversation;
+    } catch (error) {
+      await sendEvent(writer, { reply: 11, message: error });
+      console.error(error);
     }
-    writer.close();
-
-    return conversation;
   } catch (error) {
-    console.error(error);
+    console.error("outer try", error);
   }
 }
 
