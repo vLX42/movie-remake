@@ -1,0 +1,17 @@
+name = "movie-remake"
+main = "src/index.ts"
+compatibility_date = "2023-04-11"
+usage_model = "bundled"
+
+kv_namespaces = [
+  { binding = "MOVIE_DATA", id = "<your token>" }
+]
+
+[triggers]
+crons = [ ]
+
+[vars]
+REPLICATE_API_TOKEN = "<your token>"
+OPENAI_API_KEY = "<your token>"
+IMAGES_ACCOUNT_ID = "<your token>"
+IMAGES_TOKEN = "<your token>"
