@@ -21,7 +21,7 @@ export default async function Page() {
         By using our site, you acknowledge doing so at your own risk and agree
         that we are not liable for any damages or losses. We encourage you to
         share the content, credit our platform, and spread the joy of Hollywood
-        Movie Remake Generator's unique creations!
+        Movie Remake Generator&#39;s unique creations!
       </p>
     </>
   );
