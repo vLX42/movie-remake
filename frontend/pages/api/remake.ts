@@ -1,4 +1,8 @@
 
+/*
+old implementation, did not work in production so this is
+just keept as an example if you are hosting it yourself and can contorl the executin time
+*/
 import { OpenAIStream, OpenAIStreamPayload } from "@/lib/openAIStream";
 import type { NextApiRequest, NextApiResponse } from "next";
 
