@@ -23,6 +23,12 @@ The project is organized into the following folders:
 
 Feel free to use the streaming examples provided in this project to build your own AI applications. However, we kindly ask that you don't clone the entire site; instead, use the provided examples and create your own unique AI-powered applications.
 
+## API Execution and Streaming
+
+Due to the long-running execution time of the movie remake generation process, the API needs to be implemented as a Cloudflare worker or an AWS Lambda function. Using a Next.js API would result in termination before the process is complete.
+
+To ensure a seamless experience for the end user, we use Server-Side Events (SSE) to stream the response. This enables the application to deliver the generated content as it becomes available, rather than waiting for the entire process to finish before sending the response.
+
 ## Contributing
 
 We welcome contributions from the community! If you have ideas or improvements, please submit a pull request or open an issue.
