@@ -1,7 +1,7 @@
 // MovieSearch.tsx
 import React from "react";
 import styles from "./original.module.css";
-import { Archivo_Narrow } from "next/font/google";
+
 import { Configuration, OpenAIApi } from "openai";
 import Remake from "./remake";
 
@@ -45,7 +45,6 @@ interface MovieDetails {
   vote_count: number;
 }
 
-const archivo_narrow = Archivo_Narrow({ subsets: ["latin"] });
 export async function OriginalMovie({
   promise,
 }: {
@@ -54,7 +53,7 @@ export async function OriginalMovie({
   const movieData = await promise;
 
   return (
-    <div className={archivo_narrow.className}>
+    <div>
       {!!movieData ? (
         <>
           <div className={styles.blurayCover}>
@@ -71,7 +70,11 @@ export async function OriginalMovie({
       ) : (
         <MovieCoverSkeleton />
       )}
-      <Remake title={movieData.title} releaseDate={movieData.release_date} movieId={movieData.id} />
+      <Remake
+        title={movieData.title}
+        releaseDate={movieData.release_date}
+        movieId={movieData.id}
+      />
     </div>
   );
 }

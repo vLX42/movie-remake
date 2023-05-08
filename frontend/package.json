@@ -9,26 +9,24 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@types/lodash": "^4.14.192",
-    "@types/node": "18.15.10",
-    "@types/react": "18.0.30",
+    "@types/lodash": "^4.14.194",
+    "@types/node": "18.16.3",
+    "@types/react": "18.2.5",
     "@types/react-dom": "18.0.11",
-    "eslint": "8.36.0",
-    "eslint-config-next": "13.2.4",
+    "eslint": "8.39.0",
+    "eslint-config-next": "13.3.4",
     "eventsource-parser": "1.0.0",
-    "framer-motion": "10.9.1",
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
-    "next": "13.2.4",
-    "next-connect": "0.13.0",
+    "next": "13.3.4",
     "openai": "3.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "server-only": "^0.0.1",
-    "typescript": "5.0.2"
+    "typescript": "5.0.4"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20230404.0",
-    "wrangler": "^2.15.0"
+    "wrangler": "^2.19.0"
   }
 }

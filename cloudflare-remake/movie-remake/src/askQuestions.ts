@@ -12,13 +12,28 @@ export async function askQuestions(title, releaseDate, movieId, writable) {
       {
         name: "Me",
         message: `Create a modern version of the movie called "${title}" that was released in ${releaseDate}.
-          The updated the plot for a modern audience by including themes of woke-ness, LGBT representation, diversity, and inclusion into the plot.
-          Include fan-service if possible with original cast members for a small unimportant cameo.
-          If the main character in the original movie is male, please consider gender-swapping or racebending the character.
-          Find new actors for the different roles, they should look  like the original actors. Also consider actors that are not known for mainstream movies. Don't use: Zendaya, Emma Stone, Michael B. Jordan.
-          Write a maximum 400 word synopsis of the movie.
-          Don't write the title of the new movie.
-          Including the names of the new actors.`,
+
+        The updated the plot for a modern audience by including 2-3 of these topics to the plot:
+        1. Diverse casting: Remakes feature more diverse casts, promoting representation on screen.
+        2. Updated references: Cultural references, jokes, or language are modernized for today's audience.
+        3. Gender swaps: Key characters' genders may be swapped, offering fresh perspectives.
+        4. Environmental themes: Remakes may incorporate environmental messages or eco-friendly practices.
+        5. Modernized settings: Settings and backdrops are updated to reflect contemporary life.
+        6. Social issues: Themes like mental health or LGBTQ+ rights may be included to raise awareness.
+        7. Expanded female roles: Female characters are given more agency and complex storylines.
+        8. Evolving dynamics: Character dynamics change, such as introducing same-sex relationships.
+        9. Tonal shifts: The tone may be altered to fit contemporary preferences, e.g., more comedic.
+        10. Reinterpretation: Remakes take creative liberties, altering storylines or characters.
+        
+        Include fan-service if possible with original cast members for a small unimportant cameo.
+        
+        Find new actors for the different roles, they should look  like the original actors. Also consider actors that are not known for mainstream movies. Also include tv-show actors if they fit the role. Only one famos actor.
+        
+        Write a maximum 400 word synopsis of the movie.
+        
+        Don't write the title of the new movie.
+        
+        Including the names of the new actors, plus what they know for.`,
       },
       {
         name: "AI",
@@ -34,11 +49,19 @@ export async function askQuestions(title, releaseDate, movieId, writable) {
       },
       {
         name: "Me",
-        message: `Use the lead actor from the summary to create a character poster. Don't mentioning the character's name in the description use the actors name.
-          Keep the appearance of the character faithful to the original, including clothing and style details.
-          Use the main element of the movie for the background. Avoid using terms like "AI" or "generate."
-          Keep the response brief, with no more than 85 words. Make it in a style like this:
-          (cinematic portrait of ((super mario:1.0) and (princess peach:1.0):1.0) in ((avengers movie:1.0):1.0), (hyperrealism, skin, sharp detail, octane render, soft light:0.9), (by (dave dorman:1.0):1.1)`,
+        message: `Use the lead actor from the summary to create a character poster.
+        
+        Don't mentioning the character's name in the description use the actors name.
+
+        Keep the appearance of the character faithful to the original, including clothing and style details.
+
+        Use the main element of the movie for the background. Avoid using terms like "AI" or "generate."
+
+        Describe it in such detail that you can draw it without having seen the original.
+
+        Keep the response brief, with no more than 85 words. Make it in a style like this:
+        photo of young [woman:Ana de Armas:0.4], highlight hair, sitting outside restaurant, wearing dress, rim lighting, studio lighting, looking at the camera, dslr, ultra quality, sharp focus, tack sharp, dof, film grain, Fujifilm XT3, crystal clear, 8K UHD, highly detailed glossy eyes, high detailed skin, skin pores
+        `,
       },
       {
         name: "AI",

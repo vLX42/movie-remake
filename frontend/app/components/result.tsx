@@ -1,7 +1,7 @@
 // MovieSearch.tsx
 import React from "react";
 import styles from "./styles.module.css";
-import { Archivo_Narrow } from "next/font/google";
+
 import Link from 'next/link';
 
 interface Movie {
@@ -14,7 +14,7 @@ interface Movie {
 interface MovieResponse {
   results: Movie[];
 }
-const archivo_narrow = Archivo_Narrow({ subsets: ["latin"] });
+
 export async function MovieSearchResult({
   promise,
 }: {
@@ -23,7 +23,7 @@ export async function MovieSearchResult({
   const movieData = await promise;
 
   return (
-    <div className={archivo_narrow.className}>
+    <div>
       {!!movieData ? (
         movieData.results.map((movie) => (
           <Link href={`/remake/${movie.id}`} className={styles.movieWrapper} key={movie.id}>

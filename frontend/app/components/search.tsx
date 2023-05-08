@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 
 import { debounce } from "lodash";
-import { Archivo_Narrow } from "next/font/google";
 import styles from "./styles.module.css";
 interface Movie {
   id: number;
@@ -14,7 +13,6 @@ interface Movie {
   poster_path: string;
 }
 
-const archivo_narrow = Archivo_Narrow({ subsets: ["latin"] });
 export const MovieSearchForm: React.FC = () => {
   const inputRef = useRef(null);
 
@@ -50,7 +48,7 @@ export const MovieSearchForm: React.FC = () => {
     event.preventDefault();
   };
   return (
-    <div className={archivo_narrow.className}>
+    <div>
       <form className={styles.form} onSubmit={handleSubmit}>
         <input
           className={styles.input}
