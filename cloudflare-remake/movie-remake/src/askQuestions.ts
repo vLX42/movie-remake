@@ -59,8 +59,12 @@ export async function askQuestions(title, releaseDate, movieId, writable) {
 
         Describe it in such detail that you can draw it without having seen the original.
 
-        Keep the response brief, with no more than 85 words. Make it in a style like this:
-        photo of young [woman:Ana de Armas:0.4], highlight hair, sitting outside restaurant, wearing dress, rim lighting, studio lighting, looking at the camera, dslr, ultra quality, sharp focus, tack sharp, dof, film grain, Fujifilm XT3, crystal clear, 8K UHD, highly detailed glossy eyes, high detailed skin, skin pores
+        Keep the response brief, with no more than 85 words. 
+
+        Keywords only
+
+        Make it in a style like this:
+        character movie poster of young [woman:Ana de Armas:0.4], highlight hair, sitting outside restaurant, wearing dress, rim lighting, studio lighting, looking at the camera, dslr, ultra quality, sharp focus, tack sharp, dof, film grain, Fujifilm XT3, crystal clear, 8K UHD, highly detailed glossy eyes, high detailed skin, skin pores
         `,
       },
       {
@@ -150,7 +154,7 @@ export async function askQuestions(title, releaseDate, movieId, writable) {
           );
           return `Failed response ${storeResponse.status} (${storeResponse.statusText}): ${errorText}`;
         }
-        sendEvent(writer,  { reply: 8, message: "all done" })
+        sendEvent(writer, { reply: 8, message: "all done" });
       }
 
       writer.close();
@@ -161,8 +165,7 @@ export async function askQuestions(title, releaseDate, movieId, writable) {
       console.error(error);
     }
   } catch (error) {
-
-    console.error("outer try",error);
+    console.error("outer try", error);
   }
 }
 

@@ -94,14 +94,18 @@
   .siteName,
   .link,
   .icon {
-    scale: 0.5;
+    scale: 0.8;
     white-space: nowrap;
+  }
+  .footer {
+    bottom: -2px;
   }
 }
 
 @media only screen and (max-width: 767px) {
   .main {
     margin: 20px;
+    margin-right: 0;
     width: calc(100vw - 40px);
   }
   .headline {
