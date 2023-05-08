@@ -40,12 +40,13 @@
   box-sizing: border-box;
   flex-wrap: nowrap;
 }
-.footer > div {
+.footer > span {
   position: absolute;
   top: -10px;
   left: 0;
   width: 100%;
   height: 10px;
+  display: block;
   background-image: linear-gradient(
     to bottom,
     rgba(0, 0, 0, 0),
@@ -57,7 +58,13 @@
 .siteName {
   color: #fff;
   font-size: 18px;
-  margin: 0 10px;
+  margin: 0 20px;
+}
+
+.separator {
+  border-left: 1px solid #666;
+  height: 24px;
+  margin: 0 20px;
 }
 
 .link {
@@ -65,25 +72,38 @@
   text-decoration: none;
   font-size: 14px;
   margin: 0 10px;
+  display: flex;
+  align-items: center;
 }
 
 .icon {
   width: 24px;
   height: 24px;
   fill: #fff;
-  margin: 0 10px;
+  margin-right: 5px;
 }
 
-@media (max-width: 600px) {
-  .siteName,
-  .link {
+@media (max-width: 767px) {
+  .hideText,
+  .separator {
     display: none;
+  }
+
+  .siteName,
+  .link,
+  .icon {
+    scale: 0.5;
+    white-space: nowrap;
   }
 }
 
 @media only screen and (max-width: 767px) {
   .main {
     margin: 20px;
+  }
+  .headline {
+    font-size: 45px;
+    padding-bottom: 40px;
   }
 }
 
