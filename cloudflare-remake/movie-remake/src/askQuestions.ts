@@ -96,10 +96,6 @@ export async function askQuestions(title, releaseDate, movieId, writable) {
       conversation[i + 1].message = output.trim();
     }
 
-    await sendEvent(writer, {
-      reply: 5,
-      message: conversation[5].message,
-    });
     const imageUrl = await generateImageReplicate(
       conversation[5].message,
       title
@@ -110,14 +106,7 @@ export async function askQuestions(title, releaseDate, movieId, writable) {
     });
 
     try {
-      await sendEvent(writer,  { reply: 8, message: `get image${imageUrl}` })
-      const imageResponse = await downloadImageWithRetry(
-        imageUrl,
-        10,
-        500,
-        writer
-      );
-      await sendEvent(writer,  { reply: 8, message: `done getting image${imageUrl}` })
+      const imageResponse = await downloadImageWithRetry(imageUrl);
       if (imageResponse) {
         let storeResponse;
         try {
@@ -127,7 +116,7 @@ export async function askQuestions(title, releaseDate, movieId, writable) {
           const blob = new Blob([imageResponse], { type: "image/png" }); // Adjust the MIME type according to the image format
           formData.append("file", blob, movieId);
           formData.append("requireSignedURLs", false);
-          sendEvent(writer,  { reply: 8, message: "send image" })
+
           storeResponse = await fetch(
             `https://api.cloudflare.com/client/v4/accounts/${IMAGES_ACCOUNT_ID}/images/v1`,
             {
@@ -138,7 +127,6 @@ export async function askQuestions(title, releaseDate, movieId, writable) {
               body: formData,
             }
           );
-          sendEvent(writer,  { reply: 8, message: "send image ok" })
         } catch (error) {
           console.log(`Failed ${error}`);
           await sendEvent(writer, { reply: 10, message: error });
@@ -162,7 +150,9 @@ export async function askQuestions(title, releaseDate, movieId, writable) {
           );
           return `Failed response ${storeResponse.status} (${storeResponse.statusText}): ${errorText}`;
         }
+        sendEvent(writer,  { reply: 8, message: "all done" })
       }
+
       writer.close();
 
       return conversation;
@@ -171,7 +161,8 @@ export async function askQuestions(title, releaseDate, movieId, writable) {
       console.error(error);
     }
   } catch (error) {
-    console.error("outer try", error);
+
+    console.error("outer try",error);
   }
 }
 
