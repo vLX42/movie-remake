@@ -1,6 +1,6 @@
 export async function downloadImageWithRetry(
   imageURL,
-  retries = 5,
+  retries = 10,
   delay = 1000
 ) {
     for (let i = 0; i <= retries; i++) {
@@ -18,5 +18,6 @@ export async function downloadImageWithRetry(
           await new Promise((resolve) => setTimeout(resolve, delay));
         }
       }
-      throw new Error("Failed to download image after retries");
+      console.error("Failed to download image after retries")
+      return
 }

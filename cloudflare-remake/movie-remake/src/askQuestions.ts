@@ -29,7 +29,7 @@ export async function askQuestions(title, releaseDate, movieId, writable) {
         
         Find new actors for the different roles, they should look  like the original actors. Also consider actors that are not known for mainstream movies. Also include tv-show actors if they fit the role. Only one famos actor.
         
-        Write a maximum 400 word synopsis of the movie.
+        Write a maximum 350 word synopsis of the movie.
         
         Don't write the title of the new movie.
         
@@ -50,7 +50,7 @@ export async function askQuestions(title, releaseDate, movieId, writable) {
       {
         name: "Me",
         message: `Use the lead actor from the summary to create a character poster.
-        
+
         Don't mentioning the character's name in the description use the actors name.
 
         Keep the appearance of the character faithful to the original, including clothing and style details.
@@ -75,7 +75,7 @@ export async function askQuestions(title, releaseDate, movieId, writable) {
         messages: getMessagesPrompt(conversation.slice(0, i + 1)),
         temperature: 0.9,
         presence_penalty: 0.6,
-        max_tokens: 605,
+        max_tokens: 635,
         stream: true,
       };
 
@@ -125,6 +125,7 @@ export async function askQuestions(title, releaseDate, movieId, writable) {
           }
         );
       } catch (error) {
+        console.log(`Failed ${error}`)
         throw new Error(`Failed ${error}`);
       }
 
@@ -132,6 +133,7 @@ export async function askQuestions(title, releaseDate, movieId, writable) {
         const storeResponseData = await storeResponse.json();
         const imageURLInCloudflare = storeResponseData.result.variants[0];
         const movieData = {
+          originalTitle: title,
           title: conversation[3].message,
           description: conversation[1].message,
           imageURL: imageURLInCloudflare,
@@ -139,6 +141,9 @@ export async function askQuestions(title, releaseDate, movieId, writable) {
         await MOVIE_DATA.put(movieId, JSON.stringify(movieData));
       } else {
         const errorText = await storeResponse.text();
+        console.error(
+          `Failed response ${storeResponse.status} (${storeResponse.statusText}): ${errorText}`
+        )
         throw new Error(
           `Failed response ${storeResponse.status} (${storeResponse.statusText}): ${errorText}`
         );
