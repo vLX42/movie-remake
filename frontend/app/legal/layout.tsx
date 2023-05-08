@@ -13,7 +13,7 @@ export default function RootLayout({
       <h1 className={`${styles.headline} ${abril_fatface.className}`}>
         Hollywood Movie Remake Generator
       </h1>
-      <div className={`${styles.children} ${abril_fatface.className}`}>{children}</div>
+      <div className={`${styles.children}`}>{children}</div>
     </div>
   );
 }
