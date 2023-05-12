@@ -35,9 +35,9 @@ const Remake = ({
   movieId: number;
   remake: any;
 }) => {
-  const [description, setDescription] = useState(remake?.description || "");
-  const [remakeTitle, setRemakeTitle] = useState(remake?.title || "");
-  const [imagePrompt, setImagePrompt] = useState(remake?.title || "");
+  const [description, setDescription] = useState(remake?.description as string|| "");
+  const [remakeTitle, setRemakeTitle] = useState(remake?.title as string || "");
+  const [imagePrompt, setImagePrompt] = useState(remake?.title as string || "");
   const [imageUrl, setImageUrl] = useState(remake?.imageURL || "");
 
   const delayedSetDescription = useCallback(
