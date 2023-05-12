@@ -9,13 +9,9 @@
   font-size: 20px;
 }
 
-
-@media only screen and (max-width: 767px) {
-  /* styles for screens smaller than 768px, which are typically mobile devices */
-  .poster {
-    width: 100%;
-    height: auto;
-  }
+.poster {
+  width: 100%;
+  height: auto;
 }
 
 .back {

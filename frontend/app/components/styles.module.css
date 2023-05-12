@@ -65,14 +65,14 @@
 
 .posterImage {
   width: 200px;
-  height: 300px;
+  height: auto;
   background-color: gray;
 }
 
 @media only screen and (max-width: 767px) {
   .posterImage {
     width: 100px;
-    height: 150px;
+    height: auto;
   }
 }
 

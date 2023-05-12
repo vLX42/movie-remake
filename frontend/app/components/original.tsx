@@ -61,7 +61,7 @@ export async function OriginalMovie({
               className={styles.coverImage}
               src={`https://image.tmdb.org/t/p/w200${movieData.poster_path}`}
               width="150"
-              height="200"
+              height="266.67"
               alt={movieData.title}
             />
             <div className={styles.titleLabel}>{movieData.title}</div>
