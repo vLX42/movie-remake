@@ -43,6 +43,7 @@ interface MovieDetails {
   video: boolean;
   vote_average: number;
   vote_count: number;
+  remake: any;
 }
 
 export async function OriginalMovie({
@@ -51,7 +52,6 @@ export async function OriginalMovie({
   promise: Promise<MovieDetails>;
 }) {
   const movieData = await promise;
-
   return (
     <div>
       {!!movieData ? (
@@ -74,6 +74,7 @@ export async function OriginalMovie({
         title={movieData.title}
         releaseDate={movieData.release_date}
         movieId={movieData.id}
+        remake={movieData.remake}
       />
     </div>
   );

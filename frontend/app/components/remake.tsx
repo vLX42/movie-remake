@@ -28,21 +28,23 @@ const Remake = ({
   releaseDate,
   title,
   movieId,
+  remake,
 }: {
   releaseDate: string;
   title: string;
   movieId: number;
+  remake: any;
 }) => {
-  const [description, setDescription] = useState("");
-  const [remakeTitle, setRemakeTitle] = useState("");
-  const [imagePrompt, setImagePrompt] = useState("");
-  const [imageUrl, setImageUrl] = useState();
+  const [description, setDescription] = useState(remake?.description || "");
+  const [remakeTitle, setRemakeTitle] = useState(remake?.title || "");
+  const [imagePrompt, setImagePrompt] = useState(remake?.title || "");
+  const [imageUrl, setImageUrl] = useState(remake?.imageURL || "");
 
   const delayedSetDescription = useCallback(
     (newText: string, delay: number = 200) => {
       const sentences = newText.split(/(?<=\. |\? |\! )/);
       let currentIndex = 0;
-  
+
       const updateSentenceBySentence = () => {
         setDescription((prevText) => {
           if (currentIndex < sentences.length) {
@@ -57,14 +59,14 @@ const Remake = ({
           setTimeout(updateSentenceBySentence, delay);
         }
       };
-  
+
       updateSentenceBySentence();
     },
     []
   );
 
-
   useEffect(() => {
+    if (remake) return undefined;
     const source = new EventSource(
       `https://movie-remake.cloudflare1490.workers.dev/?dummy=value&releaseDate=${releaseDate}&title=${title}&movieId=${movieId}`
     );
@@ -90,7 +92,7 @@ const Remake = ({
           setImagePrompt(json.message.title);
           setImageUrl(json.message.imageURL);
           break;
-          case 8:
+        case 8:
           //all done lets close the event stream
           source.close();
           break;
@@ -120,7 +122,7 @@ const Remake = ({
         )}
       </h1>
 
-      <TextFormatter text={description} className={styles.description} />
+      <TextFormatter text={description || ""} className={styles.description} />
       {imagePrompt && (
         <>
           {imageUrl ? (
