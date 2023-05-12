@@ -38,7 +38,7 @@ const Remake = ({
   const [description, setDescription] = useState(remake?.description as string|| "");
   const [remakeTitle, setRemakeTitle] = useState(remake?.title as string || "");
   const [imagePrompt, setImagePrompt] = useState(remake?.title as string || "");
-  const [imageUrl, setImageUrl] = useState(remake?.imageURL || "");
+  const [imageUrl, setImageUrl] = useState(remake?.imageURL as string || "");
 
   const delayedSetDescription = useCallback(
     (newText: string, delay: number = 200) => {
