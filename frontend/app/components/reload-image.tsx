@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LoadingImage } from './loading-image';
 
 interface ReloadableImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
@@ -17,11 +17,31 @@ export const ReloadableImage: React.FC<ReloadableImageProps> = ({ src, alt, widt
     if (errorCount < 1) {
       setErrorCount(errorCount + 1);
       // Adding a timestamp query parameter to the URL to force a reload, bypassing any caching
-      setImageUrl(`${src}&ts=${new Date().getTime()}`);
+      setImageUrl(`${src}?ts=${new Date().getTime()}`);
     } else {
       console.error('Failed to load the image after retrying.');
     }
   };
+
+
+  useEffect(() => {
+    const img = new Image();
+  
+    img.onload = () => {
+      setIsLoading(false);
+    };
+  
+    img.onerror = () => {
+      setIsLoading(false);
+      // You can call your handleError function here too.
+      handleError();
+    };
+  
+    img.src = imageUrl;
+  
+    // This will force the onLoad event to trigger even if the image is cached.
+    if (img.complete) img.onload(null as any);
+  }, [imageUrl, handleError]);
 
   const handleLoad = () => {
     setIsLoading(false);
@@ -29,7 +49,7 @@ export const ReloadableImage: React.FC<ReloadableImageProps> = ({ src, alt, widt
 
   return (
     <>
-      {isLoading && <LoadingImage />}
+      {isLoading && <><LoadingImage />{imageUrl}</>}
       <img
         src={imageUrl}
         alt={alt}
