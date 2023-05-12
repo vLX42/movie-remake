@@ -25,6 +25,7 @@ export async function generateMetadata({
         type: "website",
       },
     };
+  return {}
 }
 
 export default async function Page({ params }: { params: { id: string } }) {
