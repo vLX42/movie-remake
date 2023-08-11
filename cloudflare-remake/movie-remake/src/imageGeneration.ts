@@ -21,7 +21,7 @@ interface Prediction {
         },
         body: JSON.stringify({
           version:
-            "db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
+            "7ca7f0d3a51cd993449541539270971d38a24d9a0d42f073caf25190d41346d7",
           input: {
             prompt: `${prompt}`,
             width: 512,
