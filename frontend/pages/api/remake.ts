@@ -1,200 +1,177 @@
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-/*
-old implementation, did not work in production so this is
-just keept as an example if you are hosting it yourself and can contorl the executin time
-*/
-import { OpenAIStream, OpenAIStreamPayload } from "@/lib/openAIStream";
-import type { NextApiRequest, NextApiResponse } from "next";
+import { downloadImageWithRetry } from "./downloadImage";
+import { generateImageReplicate } from "./imageGeneration";
+import { getMessagesPrompt, sendEvent } from "./messageHandling";
+import { OpenAIStream } from "./openAIStream";
 
-async function generateImageEvoke(prompt: string, title: string) {
+export const runtime = 'edge'; // 'nodejs' is the default
+
+
+
+export async function askQuestions(title: string, releaseDate: string, movieId: string, writable: any) {
+  let writer = writable.getWriter();
   try {
-
-    const response = await fetch(
-      "https://xarrreg662.execute-api.us-east-1.amazonaws.com/sdAddEle",
+    const conversation = [
       {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          token: process.env.EVOKE_AUTH_TOKEN,
-          prompt: `BOOK COVER STYLE, ${prompt}. Movie poster STYLE, action shot, highly detailed 8k --ar 9:18`,
-        }),
+        name: "Me",
+        message: `Create a modern version of the movie called "${title}" that was released in ${releaseDate}.
+
+        Write a maximum 275 word synopsis of the movie.
+
+        The updated the plot for a modern audience by including 2-3 of these topics to the plot:
+        1. Diverse casting: Remakes feature more diverse casts, promoting representation on screen.
+        2. Updated references: Cultural references, jokes, or language are modernized for today's audience.
+        3. Gender swaps: Key characters' genders may be swapped, offering fresh perspectives.
+        4. Environmental themes: Remakes may incorporate environmental messages or eco-friendly practices.
+        5. Modernized settings: Settings and backdrops are updated to reflect contemporary life.
+        6. Social issues: Themes like mental health or LGBTQ+ rights may be included to raise awareness.
+        7. Expanded female roles: Female characters are given more agency and complex storylines.
+        8. Evolving dynamics: Character dynamics change, such as introducing same-sex relationships.
+        9. Tonal shifts: The tone may be altered to fit contemporary preferences, e.g., more comedic.
+        10. Reinterpretation: Remakes take creative liberties, altering storylines or characters.
+
+        Include fan-service if possible with original cast members for a small unimportant cameo.
+
+        Find new actors for the different roles, they should look  like the original actors. Also consider actors that are not known for mainstream movies. Also include tv-show actors if they fit the role. Only one famos actor.
+
+        Don't write the title of the new movie.
+
+        Including the names of the new actors, plus what they know for.`,
+      },
+      {
+        name: "AI",
+        message: "",
+      },
+      {
+        name: "Me",
+        message: "Find a title for this remake. Return title only",
+      },
+      {
+        name: "AI",
+        message: "",
+      },
+      {
+        name: "Me",
+        message: `Use the lead actor from the summary to create a character poster.
+
+        Don't mentioning the character's name in the description use the actors name.
+
+        Keep the appearance of the character faithful to the original, including clothing and style details.
+
+        Use the main element of the movie for the background. Avoid using terms like "AI" or "generate."
+
+        Describe it in such detail that you can draw it without having seen the original.
+
+        Keep the response brief, with no more than 85 words.
+
+        Keywords only
+
+        Make it in a style like this:
+        character movie poster of young [woman:Ana de Armas:0.4], highlight hair, sitting outside restaurant, wearing dress, rim lighting, studio lighting, looking at the camera, dslr, ultra quality, sharp focus, tack sharp, dof, film grain, Fujifilm XT3, crystal clear, 8K UHD, highly detailed glossy eyes, high detailed skin, skin pores
+        `,
+      },
+      {
+        name: "AI",
+        message: "",
+      },
+    ];
+
+    for (let i = 0; i < conversation.length; i += 2) {
+      const payload = {
+        model: "gpt-4",
+        messages: getMessagesPrompt(conversation.slice(0, i + 1)),
+        temperature: 0.9,
+        presence_penalty: 0.6,
+        max_tokens: 635,
+        stream: true,
+      };
+
+      const stream = await OpenAIStream(payload);
+      const reader = stream.getReader();
+      const decoder = new TextDecoder();
+      let output = "";
+      let done = false;
+
+      while (!done) {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+        const chunkValue = decoder.decode(value);
+        output += chunkValue;
+        await sendEvent(writer, { reply: i, message: chunkValue });
       }
+
+      conversation[i + 1].message = output.trim();
+    }
+
+    const imageUrl = await generateImageReplicate(
+      conversation[5].message,
+      title
     );
-
-    if (!response.ok) {
-      const errorBody = await response.text();
-      throw new Error(
-        `HTTP error: ${response.status}. Response body: ${errorBody}`
-      );
-    }
-
-    const data = await response.json();
-
-    const imageURL = data.body.UUID;
-    return imageURL;
-  } catch (error) {
-    console.error("Error generating image:", error);
-    return null;
-  }
-}
-
-const DALLE_API_URL = "https://api.openai.com/v1/images/generations";
-
-async function generateImage(prompt: string): Promise<string | null> {
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-  };
-
-  const body = {
-    prompt: prompt,
-    model: "image-alpha-001",
-    num_images: 1,
-    size: "512x512",
-    response_format: "url",
-  };
-
-  try {
-    const response = await fetch(DALLE_API_URL, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(body),
+    await sendEvent(writer, {
+      reply: 6,
+      message: imageUrl,
     });
 
-    if (!response.ok) {
-      const errorBody = await response.text();
-      throw new Error(
-        `HTTP error: ${response.status}. Response body: ${errorBody}`
-      );
-    }
-
-    const data = await response.json();
-    const imageURL = data.data[0].url;
-    return imageURL;
-  } catch (error) {
-    console.error("Error generating image:", error);
-    return null;
-  }
-}
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const { title, releaseDate } = req.query;
-
-  if (typeof title !== "string" || typeof releaseDate !== "string") {
-    res.status(400).json({ error: "Missing or invalid query parameters" });
-    return;
-  }
-
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache, no-transform");
-  res.setHeader("Connection", "keep-alive");
-
-  const sendEvent = (data: object) => {
-    res.write(`event: add\ndata: ${JSON.stringify(data)}\n\n`);
-  };
-  function getMessagesPrompt(chat: any) {
-    let messages: any[] = [];
-
-    chat.map((message: any) => {
-      const role = message.name == "Me" ? "user" : "assistant";
-      const m = { role: role, content: message.message };
-      messages.push(m);
-    });
-
-    return messages;
-  }
-
-  async function askQuestions() {
     try {
-      // Define your OpenAI API key
+      const imageResponse = await downloadImageWithRetry(imageUrl);
+      if (imageResponse) {
+        let storeResponse;
 
-      // Define the conversation history as an array of objects
-      const conversation = [
-        {
-          name: "Me",
-          message: `Make a moderen remake of the movie: "${title}" from ${releaseDate}
-            Update it for a modern audience, make it: woke, lgbt, diversity and add some inclusion to the plot.
-            Gender swap the main charater, if the main charater is male. Find present actors for the roles, also up comming names, don't use: Zendaya. Give me a movie synopsis without the movie title, include the actors names in the synopsis `,
-        },
-        {
-          name: "AI",
-          message: "",
-        },
-        {
-          name: "Me",
-          message: "Find a title for this remake. Return title only",
-        },
-        {
-          name: "AI",
-          message: "",
-        },
-        {
-          name: "Me",
-          message: `Make a AI image generation prompt for a charater poster of the main charater. Actor name in the prompt. Dont use the charaters name in the prompt. Keep the cloating close to the original charater, Describe clothing and style in great detail. Don't include the movie name. Include description of main element of the movie for the background. Don't use words like AI or Generate.  Make the response short, max 85 words`,
-        },
-        {
-          name: "AI",
-          message: "",
-        },
-      ];
 
-      // Loop through each message in the conversation
-      for (let i = 0; i < conversation.length; i += 2) {
-        // Define the prompt as the previous message from the AI plus the current message from Me
-        const prompt =
-          conversation[i].message + " " + conversation[i + 1].message;
 
-        // Define the payload for the OpenAIStream function
-        const payload: OpenAIStreamPayload = {
-          model: "gpt-3.5-turbo",
-          messages: getMessagesPrompt(conversation.slice(0, i + 1)),
-          temperature: 0.9,
-          presence_penalty: 0.6,
-          max_tokens: 340,
-          stream: true,
-        };
 
-        // Call the OpenAIStream function with the payload and API key
-        const stream = await OpenAIStream(payload);
-        const reader = stream?.getReader();
-        const decoder = new TextDecoder();
-        let output = "";
-        let done = false;
-
-        while (!done) {
-          const { value, done: doneReading } = await reader?.read();
-          done = doneReading;
-          const chunkValue = decoder.decode(value);
-          output += chunkValue;
-          sendEvent({ reply: i, message: chunkValue });
-        }
-
-        // Save the AI's response to the conversation history
-        conversation[i + 1].message = output.trim();
+        sendEvent(writer, { reply: 8, message: "all done" });
       }
-      //generateImage
-      sendEvent({
-        reply: 6,
-        message: await generateImageEvoke(
-          conversation[5].message,
-          title as string
-        ),
-      });
+
+      writer.close();
+
+      return conversation;
     } catch (error) {
+      await sendEvent(writer, { reply: 11, message: error });
       console.error(error);
     }
+  } catch (error) {
+    console.error("outer try", error);
   }
-  sendEvent({ reply: -1, message: "starting" });
-  // Call the askQuestions function
-  await askQuestions();
-
-  // Clean up when the connection is closed
-  req.on("close", () => {
-    res.end();
-  });
 }
+
+export default function handler(request: NextRequest) {
+  let { readable, writable } = new TransformStream();
+  var headers = new Headers();
+  headers.append("Content-Type", "text/event-stream");
+  headers.append("Cache-Control", "no-cache");
+  headers.append("Connection", "keep-alive");
+  headers.append("Access-Control-Allow-Origin", "*");
+  headers.append(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  headers.append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE"); // Add the methods used in your application
+
+  var init = { status: 200, statusText: "ok", headers: headers };
+  const url = new URL(request.url);
+  const title = url.searchParams.get("title");
+  const releaseDate = url.searchParams.get("releaseDate");
+  const movieId = url.searchParams.get("movieId");
+  console.log("crap")
+  if (!title || !releaseDate || !movieId) {
+    console.log("more crap", title, releaseDate, movieId)
+    return new NextResponse(readable, {
+      ...init,
+      status: 400,
+      statusText: "bad request",
+      body: "Title, releaseDate or MovieId is missing",
+    });
+  }
+
+  console.log(title, releaseDate, movieId)
+
+  askQuestions(title, releaseDate, movieId, writable);
+
+  return new NextResponse(readable, init);
+}
+
+
+

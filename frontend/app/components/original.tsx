@@ -2,7 +2,7 @@
 import React from "react";
 import styles from "./original.module.css";
 
-import { Configuration, OpenAIApi } from "openai";
+import { Configuration, OpenAIApi } from "openai-edge";
 import Remake from "./remake";
 
 const configuration = new Configuration({
