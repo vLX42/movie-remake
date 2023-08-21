@@ -14,8 +14,6 @@ lineNumbers: false
 info: |
   ## Movie Remake Generator
   Presentation slides for developers.
-
-  Learn more at [Sli.dev](https://sli.dev)
 # persist drawings in exports and build
 drawings:
   persist: false
@@ -49,6 +47,7 @@ layout: two-cols
 image: ./images/linkedin-qr.png
 transition: fade-out
 ---
+
 <template v-slot:default>
 
 # Peter Biro
@@ -647,7 +646,9 @@ layout: image-left-33
 image: ./images/streaming.jpg
 ---
 # AWS Lambda response streaming
+
 The React.js part
+
 ```ts {all|5|9-23|20-21|all}
 useEffect(() => {
     const fetchData = async () => {
@@ -950,8 +951,6 @@ image: ./images/chain.jpg
     }
   )
 ```
-
-
 
 ---
 layout: image-left-33

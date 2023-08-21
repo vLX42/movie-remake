@@ -635,7 +635,7 @@
     estree-walker "^2.0.2"
     picomatch "^2.3.1"
 
-"@slidev/cli@^0.42.8":
+"@slidev/cli@^0.42.5":
   version "0.42.8"
   resolved "https://registry.yarnpkg.com/@slidev/cli/-/cli-0.42.8.tgz#d7881d01364bfc480af6ae8a52dda1dfcb41f99e"
   integrity sha512-CfrGlnMqXF/SvRbtOyM6eH0nYS9+cJHUG8yLp3pu4dYZUVw/hNpRPvnOZnxfZb19p6g448suVCi9htctDI0Iag==
@@ -740,7 +740,7 @@
     "@slidev/types" "0.42.8"
     js-yaml "^4.1.0"
 
-"@slidev/theme-default@*":
+"@slidev/theme-default@0.21.2":
   version "0.21.2"
   resolved "https://registry.yarnpkg.com/@slidev/theme-default/-/theme-default-0.21.2.tgz#28db9f074cd0b17d19ca6ccd1d4c75db7a24b026"
   integrity sha512-neUucFs2YrRZZd73QwvLTyRG/o1nerDFUR5t8YAmXVLTMzWfY71flQ6aAhjYf+WjsozYsOHcxi/pZtIzZ4VhTQ==
