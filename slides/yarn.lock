@@ -635,7 +635,7 @@
     estree-walker "^2.0.2"
     picomatch "^2.3.1"
 
-"@slidev/cli@^0.42.5":
+"@slidev/cli@^0.42.8":
   version "0.42.8"
   resolved "https://registry.yarnpkg.com/@slidev/cli/-/cli-0.42.8.tgz#d7881d01364bfc480af6ae8a52dda1dfcb41f99e"
   integrity sha512-CfrGlnMqXF/SvRbtOyM6eH0nYS9+cJHUG8yLp3pu4dYZUVw/hNpRPvnOZnxfZb19p6g448suVCi9htctDI0Iag==
@@ -750,10 +750,10 @@
     prism-theme-vars "^0.2.2"
     theme-vitesse "^0.1.12"
 
-"@slidev/theme-seriph@0.21.3":
-  version "0.21.3"
-  resolved "https://registry.yarnpkg.com/@slidev/theme-seriph/-/theme-seriph-0.21.3.tgz#16f7e348876d6a802e058d10d96e0193a58e5097"
-  integrity sha512-cLya6O4hmcLHUhloCMPPoKMLX27Q+8M8pRS82BSsLXVeXTXrlpc3l3glx5VB738p+NQr7FgqFN6H2CXQRoVv9Q==
+"@slidev/theme-seriph@0.21.2":
+  version "0.21.2"
+  resolved "https://registry.yarnpkg.com/@slidev/theme-seriph/-/theme-seriph-0.21.2.tgz#d8ac290b9df69ee9fe753921e3a8cc2475678e31"
+  integrity sha512-D3zhFYBmH1X37LX1LvTUPxAM1EEK6vMfy4hyxI9JIBXuugVq1WrfjcD+Lt9HnLpH1EqD3Mk+gS0lP/uC2TaVQw==
   dependencies:
     "@slidev/types" "^0.22.7"
     codemirror-theme-vars "^0.1.1"
