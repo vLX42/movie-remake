@@ -157,7 +157,7 @@ export default function handler(request: NextRequest) {
   const movieId = url.searchParams.get("movieId");
   console.log("crap")
   if (!title || !releaseDate || !movieId) {
-    console.log("more crap", title, releaseDate, movieId)
+
     return new NextResponse(readable, {
       ...init,
       status: 400,
