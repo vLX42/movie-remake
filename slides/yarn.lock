@@ -635,10 +635,10 @@
     estree-walker "^2.0.2"
     picomatch "^2.3.1"
 
-"@slidev/cli@^0.42.8":
-  version "0.42.8"
-  resolved "https://registry.yarnpkg.com/@slidev/cli/-/cli-0.42.8.tgz#d7881d01364bfc480af6ae8a52dda1dfcb41f99e"
-  integrity sha512-CfrGlnMqXF/SvRbtOyM6eH0nYS9+cJHUG8yLp3pu4dYZUVw/hNpRPvnOZnxfZb19p6g448suVCi9htctDI0Iag==
+"@slidev/cli@^0.42.9":
+  version "0.42.9"
+  resolved "https://registry.yarnpkg.com/@slidev/cli/-/cli-0.42.9.tgz#5c153a11c9e20466ef41decb32fc170e49199d33"
+  integrity sha512-JehwE5fL/CoIK7+CY3qw9IUcOnYw2L45S29jmmjb0cDEfDNz1J1YJDZQRc4o/DW//yZ9cuCLkQ4iaw+foCXLEg==
   dependencies:
     "@antfu/utils" "^0.7.6"
     "@hedgedoc/markdown-it-plugins" "^2.1.3"
@@ -646,9 +646,9 @@
     "@iconify-json/ph" "^1.1.6"
     "@lillallol/outline-pdf" "^4.0.0"
     "@mrdrogdrog/optional" "^1.2.1"
-    "@slidev/client" "0.42.8"
-    "@slidev/parser" "0.42.8"
-    "@slidev/types" "0.42.8"
+    "@slidev/client" "0.42.9"
+    "@slidev/parser" "0.42.9"
+    "@slidev/types" "0.42.9"
     "@vitejs/plugin-vue" "^4.2.3"
     "@vitejs/plugin-vue-jsx" "^3.0.1"
     "@windicss/config" "^1.9.1"
@@ -698,14 +698,14 @@
     windicss "^3.5.6"
     yargs "^17.7.2"
 
-"@slidev/client@0.42.8":
-  version "0.42.8"
-  resolved "https://registry.yarnpkg.com/@slidev/client/-/client-0.42.8.tgz#e48f04bd9f4d0ae37d327b2b001b867ad9588d94"
-  integrity sha512-1KzcH8iaegZ64jDGxCHYt329yINh2iDOIWzFesRhLJPjWAAZPEShPFYhXOUDWnox8KAhPB9X/zZcGtFZ6QmUEw==
+"@slidev/client@0.42.9":
+  version "0.42.9"
+  resolved "https://registry.yarnpkg.com/@slidev/client/-/client-0.42.9.tgz#9023a7446b287b6eb9828c0862f840bbf5483099"
+  integrity sha512-WmsY90Zy44+LvG8CBB++B2zI8jD39sGElhzcVDmrSpd70W6bYvf5rfXMzs2TxLdaR/qHmU2jYiNh+wQVsSKNIg==
   dependencies:
     "@antfu/utils" "^0.7.6"
-    "@slidev/parser" "0.42.8"
-    "@slidev/types" "0.42.8"
+    "@slidev/parser" "0.42.9"
+    "@slidev/types" "0.42.9"
     "@unocss/reset" "^0.55.0"
     "@vueuse/core" "^10.3.0"
     "@vueuse/head" "^1.3.1"
@@ -732,12 +732,12 @@
     vue-starport "^0.3.0"
     windicss "^3.5.6"
 
-"@slidev/parser@0.42.8":
-  version "0.42.8"
-  resolved "https://registry.yarnpkg.com/@slidev/parser/-/parser-0.42.8.tgz#5463bb2bb8f893674a7fdb006d6aa8fde413551f"
-  integrity sha512-sJRIO0TrxLUIMAmCiDKOWFm86tFWJaKjwU8Y/T9+mkOOs02MM9aQ76AryehzfYaRyL97r+R1vyqKEVtztKEtGw==
+"@slidev/parser@0.42.9":
+  version "0.42.9"
+  resolved "https://registry.yarnpkg.com/@slidev/parser/-/parser-0.42.9.tgz#4707fe1da03ba22b64e5c5f0579903b9bbb652c3"
+  integrity sha512-7CHjWDJjv0Cu6tmaXGwcg7k3Vh4dM+W2ZcCBIb6wZ+UnG0s2vQVPc/2dxJc5VeU7qjw7s7yymEyeq0lX0Nd69w==
   dependencies:
-    "@slidev/types" "0.42.8"
+    "@slidev/types" "0.42.9"
     js-yaml "^4.1.0"
 
 "@slidev/theme-default@0.21.2":
@@ -760,10 +760,10 @@
     prism-theme-vars "^0.2.2"
     theme-vitesse "^0.1.12"
 
-"@slidev/types@0.42.8":
-  version "0.42.8"
-  resolved "https://registry.yarnpkg.com/@slidev/types/-/types-0.42.8.tgz#f62031c43af03ab8d92ccc88b4f1c8d75d9ab141"
-  integrity sha512-YwQ63xJnUweFh2HO4FW7fVSdYVsGJzn1Di/+Qpxgcmm6x6RjX0QQ+w5NzYTxFzrvY/Nc5nGn6yhowGTkQjOFRg==
+"@slidev/types@0.42.9":
+  version "0.42.9"
+  resolved "https://registry.yarnpkg.com/@slidev/types/-/types-0.42.9.tgz#0ff38a93d7c5ddecae09ddef435dd89c1f17d25a"
+  integrity sha512-6jlN/ZpIyRuxroYT7U7VC/gLCelFxafQX4WXfjlglk3oyK3ytb8i8LiO3tHIEueWup2WlQRXNDJpVvqg25GlNA==
 
 "@slidev/types@^0.22.7":
   version "0.22.7"

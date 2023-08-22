@@ -69,6 +69,16 @@ transition: fade-out
 [![Peter's LinkedIn QR Code](/images/linkedin-qr.png)](https://www.linkedin.com/in/vlx42/)
 </template>
 
+<!--
+I've been a web developer for 25 years, watching the web's continuous evolution. I believe React has some exciting changes ahead, not just with AI but also with React server components. It reminds me of my early days with WinCgi in Delphi. We are again without session variables (for now), relying on client-side cookies. Mostly because its all runing on the Edge functions and because everthing is being rewriten right now. 
+
+I hope this talk can give you some insight in how you can use Ai in your projects not for writing your code but to utilize it to make your apps better.
+
+How many of you have tried to use the openAI API, not the online version of chatGPT
+
+Sorry, you might not learn anything new from this talk.
+-->
+
 ---
 layout: image-left-33
 image: ./images/intro.jpg
@@ -88,9 +98,9 @@ I would like to cover the following:
 - Langchain
 - GPDR and your options
 
-
-
-
+<!--
+Here's a brief list of topics I'll cover. I might go through some points quickly to fit within our allotted time.
+-->
 
 ---
 layout: image-left-33
@@ -111,6 +121,15 @@ image: ./images/sw.jpg
 
 [movie-remake.vlx.dk](https://movie-remake.vlx.dk/)
 
+<!--
+Here at DFDS, we have what's called the Frontend Community, where we engage in knowledge sharing and more. I was looking for an excuse to dive into a side project. After enduring another butchered Hollywood remake, I thought, "Why not use ChatGPT to butcher my childhood classics and automate the remake process?"
+
+This app taps into TheMovieDB to pull movie details and then lets ChatGPT butcher them further. ChatGPT also crafts prompts to create character posters using stable diffusion.
+
+Right now, the solution is deployed on Vercel, with the AI function running as a CloudFront worker. I'll explain the 'why' behind this setup during the presentation.
+
+But first, a quick demo to give you a taste of what I'm talking about.
+-->
 
 ---
 transition: fade-out
@@ -121,6 +140,13 @@ transition: fade-out
 <img src="/images/broke.gif" class="m-5 h-70 rounded shadow" style="position: absolute; top: 274px; left: 150px;" />
 </v-clicks>
 
+<!--
+I relied heavily on ChatGPT for this project, especially when estimating costs if my site went viral. However, I think ChatGPT knows me a bit too well now and has started being mean to me.
+
+But on a serious note, I did spend $20 just preparing for this talk by running numerous requests with GPT-4. Always set a limit, just in case! :)
+
+And im using Cloudflair because it has some good options for Key/value storage and image storage. To cache the requests just in case.
+-->
 
 ---
 layout: image-left-33
@@ -152,6 +178,10 @@ export async function searchMovies(searchTerm: string): Promise<any> {
 }
 ```
 
+<!--
+I just have to highlight this, because SSR (Server-Side Rendering) is so exciting. This is the search function for my app, all running on the server using just native React/Next.js code. No packages required.
+-->
+
 ---
 layout: image-left-33
 image: ./images/robot.jpg
@@ -176,6 +206,10 @@ This is a simple example of OpenAi request
       stream: true,
     };
 ```
+
+<!--
+Let's kick things off with some OpenAI content. This is a straightforward request sent to OpenAI, utilizing ChatGPT 3.5.
+-->
 
 ---
 layout: image-left-33
@@ -222,6 +256,7 @@ transition: fade-out
 layout: image-left-33
 image: ./images/robot.jpg
 ---
+
 # Vercel AI SDK
 
 The easy way to get starting
@@ -250,16 +285,28 @@ export async function POST(req) {
 }
 ```
 
+<!--
+Vercel has developed a great AI SDK that's worth checking out, especially if you're considering building an app with chat functionality or something similar. I'll discuss scenarios where it might make more sense to create a custom solution.
+
+Normal serverless function 
+Hobby: 10
+Pro: 60
+Enterprise: 900
+
+No limits for edge functions (yet) But they need to start responding within 30 secounds
+-->
+
 ---
 transition: fade-out
 layout: image-left-33
 image: ./images/robot.jpg
 ---
+
 # Vercel AI SDK
 
 
 ### Frontend
-```ts {all|5|9-13|all}
+```ts {all|5|9-13|15-21|all}
 // ./app/page.js
 'use client'
 import { useChat } from 'ai/react'
@@ -285,6 +332,7 @@ export default function Chat() {
   )
 }
 ```
+
 
 ---
 transition: fade-out
@@ -454,6 +502,11 @@ Why is streaming important with AI?
 
 </v-clicks>
 
+<!--
+This was the initial challenge I faced while working on this side project. I aimed to achieve a smooth streaming effect for the public ChatGPT. I was unaware of Vercel's Edge function's streaming capability until after I had completed my implementations with Cloudflare workers and AWS Lambdas. This led me to explore how streaming responses function.
+
+I'll discuss two methods to achieve this. Of course, there are other techniques, such as using socket.io or an HTTP/2 approach.
+-->
 
 ---
 layout: image-left-33
