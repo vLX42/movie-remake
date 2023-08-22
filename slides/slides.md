@@ -44,7 +44,7 @@ How to get started with AI in your apps
 
 ---
 layout: two-cols
-image: ./images/linkedin-qr.png
+image: /images/linkedin-qr.png
 transition: fade-out
 ---
 
@@ -81,7 +81,7 @@ Sorry, you might not learn anything new from this talk.
 
 ---
 layout: image-left-33
-image: ./images/intro.jpg
+image: /images/intro.jpg
 ---
 
 # Content
@@ -104,7 +104,7 @@ Here's a brief list of topics I'll cover. I might go through some points quickly
 
 ---
 layout: image-left-33
-image: ./images/sw.jpg
+image: /images/sw.jpg
 ---
 
 # What did i make - Hollywood Movie Remake Generator
@@ -150,7 +150,7 @@ And im using Cloudflair because it has some good options for Key/value storage a
 
 ---
 layout: image-left-33
-image: ./images/nextjs2.png
+image: /images/nextjs2.png
 ---
 
 # Searching with Next.js and SSR :)
@@ -184,7 +184,7 @@ I just have to highlight this, because SSR (Server-Side Rendering) is so excitin
 
 ---
 layout: image-left-33
-image: ./images/robot.jpg
+image: /images/robot.jpg
 ---
 
 # OpenAI
@@ -213,7 +213,7 @@ Let's kick things off with some OpenAI content. This is a straightforward reques
 
 ---
 layout: image-left-33
-image: ./images/robot.jpg
+image: /images/robot.jpg
 ---
 
 # OpenAI
@@ -254,7 +254,7 @@ Example of my questions
 ---
 transition: fade-out
 layout: image-left-33
-image: ./images/robot.jpg
+image: /images/robot.jpg
 ---
 
 # Vercel AI SDK
@@ -299,7 +299,7 @@ No limits for edge functions (yet) But they need to start responding within 30 s
 ---
 transition: fade-out
 layout: image-left-33
-image: ./images/robot.jpg
+image: /images/robot.jpg
 ---
 
 # Vercel AI SDK
@@ -474,7 +474,7 @@ Using the Vercel AI SDK - `experimental_StreamData`.
 
 ---
 layout: image-left-33
-image: ./images/streaming.jpg
+image: /images/streaming.jpg
 ---
 
 # Streaming the Response to the Client
@@ -510,7 +510,7 @@ I'll discuss two methods to achieve this. Of course, there are other techniques,
 
 ---
 layout: image-left-33
-image: ./images/streaming.jpg
+image: /images/streaming.jpg
 ---
 
 # SSE - Server Sent Event
@@ -526,7 +526,7 @@ image: ./images/streaming.jpg
 
 ---
 layout: image-left-33
-image: ./images/streaming.jpg
+image: /images/streaming.jpg
 ---
 
 # The Next.js way
@@ -561,7 +561,7 @@ React.js code:
 
 ---
 layout: image-left-33
-image: ./images/streaming.jpg
+image: /images/streaming.jpg
 ---
 
 # Cloudflair Worker
@@ -593,7 +593,7 @@ async function fetchAndApply(request) {
 ```
 ---
 layout: image-left-33
-image: ./images/streaming.jpg
+image: /images/streaming.jpg
 ---
 
 # Cloudflair Worker
@@ -627,7 +627,7 @@ async function askQuestions(title, releaseDate, writable) {
 
 ---
 layout: image-left-33
-image: ./images/streaming.jpg
+image: /images/streaming.jpg
 ---
 
 # Chunked Transfer Encoding
@@ -644,7 +644,7 @@ image: ./images/streaming.jpg
 
 ---
 layout: image-left-33
-image: ./images/streaming.jpg
+image: /images/streaming.jpg
 ---
 
 # AWS Lambda response streaming
@@ -676,7 +676,7 @@ exports.handler = awslambda.streamifyResponse(
 ```
 ---
 layout: image-left-33
-image: ./images/streaming.jpg
+image: /images/streaming.jpg
 ---
 # AWS Lambda response streaming
 ```ts {all|12|all}
@@ -698,7 +698,7 @@ image: ./images/streaming.jpg
 
 ---
 layout: image-left-33
-image: ./images/streaming.jpg
+image: /images/streaming.jpg
 ---
 # AWS Lambda response streaming
 
@@ -745,7 +745,7 @@ useEffect(() => {
 
 ---
 layout: image-left-33
-image: ./images/streaming.jpg
+image: /images/streaming.jpg
 ---
 # AWS Lambda response streaming
 Learn more about AWS Lambda response streaming:
@@ -758,7 +758,7 @@ https://github.com/aws-samples/serverless-patterns/tree/main/lambda-streaming-tt
 
 ---
 layout: image-left-33
-image: ./images/construction.jpg
+image: /images/construction.jpg
 ---
 
 # Improving on the solution
@@ -771,7 +771,7 @@ image: ./images/construction.jpg
 
 ---
 layout: image-left-33
-image: ./images/construction.jpg
+image: /images/construction.jpg
 ---
 
 # Improving on the Solution
@@ -803,7 +803,7 @@ Randomize your question
 
 ---
 layout: image-left-33
-image: ./images/construction.jpg
+image: /images/construction.jpg
 ---
 
 # ChatGPT functions call
@@ -833,7 +833,7 @@ const functions: ChatCompletionFunctions[] = [
 
 ---
 layout: image-left-33
-image: ./images/construction.jpg
+image: /images/construction.jpg
 ---
 
 # ChatGPT Functions Call
@@ -852,7 +852,7 @@ Call the API. The question needs to be clear enough for the model to understand 
 
 ---
 layout: image-left-33
-image: ./images/construction.jpg
+image: /images/construction.jpg
 ---
 
 # ChatGPT Functions Call
@@ -882,7 +882,7 @@ Call the API. The question needs to be clear enough for the model to understand 
 
 ---
 layout: image-left-33
-image: ./images/brain.jpg
+image: /images/brain.jpg
 ---
 
 # Why Embedding Over Training?
@@ -896,7 +896,7 @@ image: ./images/brain.jpg
 
 ---
 layout: image-left-33
-image: ./images/brain.jpg
+image: /images/brain.jpg
 ---
 
 # What are Vector Stores?
@@ -909,7 +909,7 @@ image: ./images/brain.jpg
 
 ---
 layout: image-left-33
-image: ./images/brain.jpg
+image: /images/brain.jpg
 ---
 
 # How to get the vector
@@ -948,7 +948,7 @@ image: ./images/brain.jpg
 
 ---
 layout: image-left-33
-image: ./images/chain.jpg
+image: /images/chain.jpg
 ---
 
 # What is LangChain?
@@ -963,7 +963,7 @@ LangChain is a framework designed for the development of applications powered by
 
 ---
 layout: image-left-33
-image: ./images/chain.jpg
+image: /images/chain.jpg
 ---
 
 # LangChain Modules
@@ -979,7 +979,7 @@ image: ./images/chain.jpg
 
 ---
 layout: image-left-33
-image: ./images/chain.jpg
+image: /images/chain.jpg
 ---
 
 # LangChain example code
@@ -1009,7 +1009,7 @@ image: ./images/chain.jpg
 
 ---
 layout: image-left-33
-image: ./images/chain.jpg
+image: /images/chain.jpg
 ---
 
 # LangChain build in prompts
@@ -1055,7 +1055,7 @@ transition: fade-out
 
 ---
 layout: image-left-33
-image: ./images/question.jpg
+image: /images/question.jpg
 ---
 # Questions?
 
