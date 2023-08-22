@@ -529,22 +529,6 @@ layout: image-left-33
 image: ./images/streaming.jpg
 ---
 
-# Chunked Transfer Encoding
-
-
-| Feature/Aspect            | Chunked Transfer Encoding Considerations |
-|---------------------------|------------------------------------------|
-| **HTTP Method**           | - Works with various methods (`GET`, `POST`|
-| **Data Integrity**        | - Ensure chunks are correctly assembled on client side.|
-| **Performance**           | - Small chunks can decrease efficiency.|
-| **Client Support**        | - Not all clients handle chunked encoding well.|
-| **Intermediary Servers**  | - Some proxies/buffers might not support or could alter chunked data.|
-
----
-layout: image-left-33
-image: ./images/streaming.jpg
----
-
 # The Next.js way
 Next.js API
 ```ts {all|3-8|10-13|all}
@@ -639,6 +623,24 @@ async function askQuestions(title, releaseDate, writable) {
 
 
 ```
+
+
+---
+layout: image-left-33
+image: ./images/streaming.jpg
+---
+
+# Chunked Transfer Encoding
+
+
+| Feature/Aspect            | Chunked Transfer Encoding Considerations |
+|---------------------------|------------------------------------------|
+| **HTTP Method**           | - Works with various methods (`GET`, `POST`|
+| **Data Integrity**        | - Ensure chunks are correctly assembled on client side.|
+| **Performance**           | - Small chunks can decrease efficiency.|
+| **Client Support**        | - Not all clients handle chunked encoding well.|
+| **Intermediary Servers**  | - Some proxies/buffers might not support or could alter chunked data.|
+
 
 ---
 layout: image-left-33
