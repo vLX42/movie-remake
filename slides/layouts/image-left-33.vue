@@ -28,7 +28,7 @@ function handleBackground(background?: string, dim = false, backgroundSize = 'co
       : background
         ? dim
           ? `linear-gradient(#0005, #0008), url(${resolveAssetUrl(background)})`
-          : `url("${resolveAssetUrl(background)}")`
+          : `url(${resolveAssetUrl(background)})`
         : undefined,
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'center',
