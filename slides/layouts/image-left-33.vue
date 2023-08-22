@@ -1,46 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-
-//todo fix this mess
-import type { CSSProperties } from 'vue'
-
-/**
- * Resolve urls from frontmatter and append with the base url
- */
-function resolveAssetUrl(url: string) {
-  if (url.startsWith('/'))
-    return import.meta.env.BASE_URL + url.slice(1)
-  return url
-}
-
-function handleBackground(background?: string, dim = false, backgroundSize = 'cover'): CSSProperties {
-  const isColor = background && (background[0] === '#' || background.startsWith('rgb'))
-
-  const style = {
-    background: isColor
-      ? background
-      : undefined,
-    color: (background && !isColor)
-      ? 'white'
-      : undefined,
-    backgroundImage: isColor
-      ? undefined
-      : background
-        ? dim
-          ? `linear-gradient(#0005, #0008), url(${resolveAssetUrl(background)})`
-          : `url(${resolveAssetUrl(background)})`
-        : undefined,
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center',
-    backgroundSize,
-  }
-
-  if (!style.background)
-    delete style.background
-
-  return style
-}
-
+import { handleBackground } from '@slidev/theme-seriph/layoutHelper';
 
 const props = defineProps({
   image: {
@@ -49,13 +9,9 @@ const props = defineProps({
   class: {
     type: String,
   },
-  backgroundSize: {
-    type: String,
-    default: 'cover',
-  },
 })
 
-const style = computed(() => handleBackground(props.image, false, props.backgroundSize))
+const style = computed(() => handleBackground(props.image))
 </script>
 
 <template>
