@@ -70,9 +70,9 @@ transition: fade-out
 </template>
 
 <!--
-I've been a web developer for 25 years, watching the web's continuous evolution. I believe React has some exciting changes ahead, not just with AI but also with React server components. It reminds me of my early days with WinCgi in Delphi. We are again without session variables (for now), relying on client-side cookies. Mostly because its all runing on the Edge functions and because everthing is being rewriten right now. 
+I've been a web developer for 25 years, watching the web's continuous evolution. I believe React has some exciting changes ahead, not just with AI but also with React server components. It reminds me winCGI in Delphi when I started doing web development. We are again without session variables (for now), relying on client-side cookies. Mostly because its all runing on the Edge functions and because everthing is being rewriten right now. 
 
-I hope this talk can give you some insight in how you can use Ai in your projects not for writing your code but to utilize it to make your apps better.
+I hope this talk can give you some insight in how you can use Ai in your projects not for writing your code but to utilize it to make your apps.
 
 How many of you have tried to use the openAI API, not the online version of chatGPT
 
@@ -122,7 +122,9 @@ image: /images/sw.jpg
 [movie-remake.vlx.dk](https://movie-remake.vlx.dk/)
 
 <!--
-Here at DFDS, we have what's called the Frontend Community, where we engage in knowledge sharing and more. I was looking for an excuse to dive into a side project. After enduring another butchered Hollywood remake, I thought, "Why not use ChatGPT to butcher my childhood classics and automate the remake process?"
+Here at DFDS, we have what's called the Frontend Community, where we engage in knowledge sharing bi-weekly
+
+This was an excuese to play with openAI. I got the idea after enduring another Hollywood remake, I thought, "Why not use ChatGPT to butcher my childhood classics and automate the remake process?"
 
 This app taps into TheMovieDB to pull movie details and then lets ChatGPT butcher them further. ChatGPT also crafts prompts to create character posters using stable diffusion.
 
@@ -333,11 +335,23 @@ export default function Chat() {
 }
 ```
 
+<!--
+A hook called useChat
+
+You get messages with all history
+
+A form for submitting question
+
+Storage of the previuse response are handled by the hook
+
+I just works
+-->
 
 ---
 transition: fade-out
 layout: two-cols
 ---
+
 <template v-slot:default>
 Using the Vercel AI SDK - useChat chained together.
 
@@ -388,6 +402,12 @@ Using the Vercel AI SDK - useChat chained together.
 </v-clicks>
 </template>
 
+<!--
+BUT.. if you like i my case wan't to do multiple questions and stream all of them back to the client you need to do something like this
+
+You chain your hooks, so when one i finished then the next start
+-->
+
 ---
 transition: fade-out
 layout: center
@@ -395,13 +415,14 @@ layout: center
 
 ![experimental_StreamData](/images/experimental_StreamData.png)
 
+<!--
+This has been added and will solve some of the problems, but not all of them.
+-->
 
 ---
 transition: fade-out
 layout: two-cols
 ---
-
-
 
 <template v-slot:default>
 Using the Vercel AI SDK - `experimental_StreamData`.
@@ -471,6 +492,9 @@ Using the Vercel AI SDK - `experimental_StreamData`.
 
 </template>
 
+<!--
+Better, but you might need more controle and more flexability
+-->
 
 ---
 layout: image-left-33
@@ -531,14 +555,14 @@ image: /images/streaming.jpg
 
 # The Next.js way
 Next.js API
-```ts {all|3-8|10-13|all}
+```ts {all|3-8|9-12|all}
 export default function handler(request: NextRequest) {
   let { readable, writable } = new TransformStream();
   var headers = new Headers();
   headers.append("Content-Type", "text/event-stream");
   headers.append("Connection", "keep-alive");
   headers.append("Access-Control-Allow-Origin", "*");
-  headers.append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE"); 
+  headers.append("Access-Control-Allow-Methods", "GET"); 
   
   export async function sendEvent(writer, data) {
     let encoder = new TextEncoder();
@@ -558,6 +582,13 @@ React.js code:
   }, []);
 ```
 
+<!--
+setup is easy 
+
+but where to run it is hard only supported with edge function on vercel
+
+may
+-->
 
 ---
 layout: image-left-33
@@ -566,7 +597,7 @@ image: /images/streaming.jpg
 
 # Cloudflair Worker
 SSE Server Sent Events
-```ts {all|1-3|8-16|21|all}
+```ts {all|1-3|8-16|all}
 addEventListener("fetch", (event) => {
   event.respondWith(fetchAndApply(event.request));
 });
@@ -591,6 +622,8 @@ async function fetchAndApply(request) {
   return new Response(readable, init);
 }
 ```
+
+
 ---
 layout: image-left-33
 image: /images/streaming.jpg
@@ -700,9 +733,8 @@ image: /images/streaming.jpg
 layout: image-left-33
 image: /images/streaming.jpg
 ---
-# AWS Lambda response streaming
 
-The React.js part
+# AWS Lambda response streaming
 
 ```ts {all|5|9-23|20-21|all}
 useEffect(() => {
@@ -715,9 +747,7 @@ useEffect(() => {
           let buffer = "";
           const readChunk = async () => {
             const { value, done } = await reader.read();
-            if (done) {
-              return;
-            }
+            if (done) return;
             buffer += decoder.decode(value, { stream: true });
             let newlineIndex;
             while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
@@ -728,10 +758,8 @@ useEffect(() => {
                 ... do stuff
               }
             }
-
             readChunk();
           };
-
           readChunk();
         }
       } catch (error) {
@@ -742,6 +770,16 @@ useEffect(() => {
     fetchData();
   }, []);
 ```
+
+<!--
+Purpose: Fetch and process data in a React component using useEffect.
+Fetching: Sends a request to a URL constructed with environment variables and parameters.
+Reading: Uses a readable stream to process the response chunk by chunk.
+Decoding: Converts each chunk into a UTF-8 string.
+JSON Parsing: Splits the string by newlines and parses each as JSON.
+Processing: Performs actions on valid JSON data.
+Error Handling: Catches and logs any errors during fetching or processing.
+-->
 
 ---
 layout: image-left-33
@@ -768,6 +806,10 @@ image: /images/construction.jpg
 <center>
 <img src="/images/actors.png" class="  rounded shadow" />
 </center>
+
+<!--
+chatGPT has the tendensy to select the same actors over and over again. It don't have any memory so a simular prompt will give you simular responses.
+-->
 
 ---
 layout: image-left-33
@@ -830,6 +872,11 @@ const functions: ChatCompletionFunctions[] = [
 ];
 ```
 
+<!--
+Right now the solution is limmited to movies before September 2021, and maybe it don't know the plot of a specific movie.
+
+So chatGPT can now call your functions. It just need some information about it.
+-->
 
 ---
 layout: image-left-33
@@ -840,12 +887,17 @@ image: /images/construction.jpg
 
 Call the API. The question needs to be clear enough for the model to understand that it should call the function.
 
+```text {all}
+Make a remake of movieId:192, use the title form the response and
+don't use movieId in the response
+```
+<br>
 ```ts {all|5|all}
   const response = await openai.createChatCompletion({
     model: "gpt-4-0613",
     stream: true,
     messages: replacedMessages,
-    functions ,
+    functions,
   });
 ```
 
@@ -946,6 +998,20 @@ image: /images/brain.jpg
 }
 ```
 
+<!--
+32000 charaters and calulate a vector in secounds
+
+But what to do with the vector?
+
+You need to store it somewhere.
+
+We did a hackatone here at DFDS where we took all the content from our wiki and internal guides. Saved it in Redis.
+
+But there some real good tooling out there to help with all this.
+
+And its called langchain
+-->
+
 ---
 layout: image-left-33
 image: /images/chain.jpg
@@ -960,6 +1026,11 @@ LangChain is a framework designed for the development of applications powered by
 - **Modular Components**: Abstractions for working with language models, making them easy to use and customize.
 - **Off-the-shelf Chains**: Pre-structured assemblies of components for specific tasks.
 
+<!--
+Langchain is a swizz army knife for embedding your own data into a language model.
+
+It is a bit opinonate, and the documentation could be better.
+-->
 
 ---
 layout: image-left-33
@@ -975,7 +1046,11 @@ image: /images/chain.jpg
 - **Memory**: Persist application state between chain runs.
 - **Callbacks**: Log and stream intermediate steps of any chain.
 
+<!--
+Langchain has thsese modules
 
+But lets look at some examples
+-->
 
 ---
 layout: image-left-33
@@ -1006,6 +1081,14 @@ image: /images/chain.jpg
     }
   )
 ```
+
+<!--
+I'm not showing all the setup and connection to your llm and vector store its something you can look at when you have picked a datastore.
+
+I'm also not showing how to embedding your data an saving it to your datastore, its not realy something for the frontend part anyway. But langchain also work for this. maybe look at the phython version for the server path because its better descriped then the javascript version.
+
+ this is the basic you need setup to get your own data into a request to the llm.
+-->
 
 ---
 layout: image-left-33
@@ -1052,16 +1135,29 @@ transition: fade-out
 | **Enterprise Features**       | -                                                          | Offers security, compliance, regional availability, and more.                                         |
 | **Integration & Connectivity**| -                                                          | Integration with other Azure Cognitive services and network features for more control over the service.|
 
+<!--
+If someone in your organization is starting to talk about GPDR, openAI being evil and is stealing your data etc.
+
+Then remeber that ms have invested massivly in it and also have the openAI api on Azure but with some more security build in and you can keep your data in the EU
+
+They are some weeks behind openAI when new features are being released.
+
+So this it is hope your found some of it usefull
+-->
 
 ---
 layout: image-left-33
 image: /images/question.jpg
 ---
+
 # Questions?
 
 
 
 <v-clicks>
 
-<img src="/images/linkedin-qr.png" class="m-28 h-70 rounded shadow" />
+<img src="/images/linkedin-qr.png" class="ml-28 mt-20 h-70 rounded shadow" />
+<br>
+The sourcecode used in this talk: <br>
+https://github.com/vLX42/movie-remake
 </v-clicks>
