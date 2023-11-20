@@ -962,7 +962,6 @@ It is a bit opinonate, and the documentation could be better.
 
 <Youtube id="e6MHpdkbcAQ" width="100%" height="100%"/>
 
-
 <!--
 Lets look at a small demo
 -->
