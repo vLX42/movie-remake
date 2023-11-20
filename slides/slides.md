@@ -958,23 +958,16 @@ It is a bit opinonate, and the documentation could be better.
 -->
 
 ---
-layout: image-left-33
-image: /images/chain.jpg
 ---
 
-<br />
-<br />
-<br />
-<br />
-<center>
+<Youtube id="e6MHpdkbcAQ" width="100%" height="100%"/>
 
-# DEMO TIME
-
-</center>
 
 <!--
 Lets look at a small demo
 -->
+
+
 
 ---
 layout: image-left-33
