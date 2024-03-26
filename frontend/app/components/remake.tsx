@@ -68,7 +68,7 @@ const Remake = ({
   useEffect(() => {
     if (remake) return undefined;
     const source = new EventSource(
-      `https://movie-remake.cloudflare1490.workers.dev/?dummy=value&releaseDate=${releaseDate}&title=${title}&movieId=${movieId}`
+      `/api/remake/?dummy=value&releaseDate=${releaseDate}&title=${title}&movieId=${movieId}`
     );
 
     source.addEventListener("add", (e: any) => {
