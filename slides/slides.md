@@ -960,8 +960,9 @@ It is a bit opinonate, and the documentation could be better.
 ---
 ---
 
-<Youtube id="e6MHpdkbcAQ" width="100%" height="100%"/>
+<Youtube id="e6MHpdkbcAQ" width="100%" height="90%"/>
 
+https://youtu.be/e6MHpdkbcAQ?si=oxJTwauRF8bhFNxx
 <!--
 Lets look at a small demo
 -->
