@@ -26,7 +26,8 @@ export async function MovieSearchResult({
     <div>
       {!!movieData ? (
         movieData.results.map((movie) => (
-          <Link href={`/remake/${movie.id}`} className={styles.movieWrapper} key={movie.id}>
+          <div key={movie.id}>
+          <Link href={`/remake/${movie.id}`} className={styles.movieWrapper} >
             <div className={styles.movie}>
               <div className={styles.poster}>
                 <img
@@ -43,6 +44,8 @@ export async function MovieSearchResult({
               </div>
             </div>
           </Link>
+          <Link href={`/remake2/${movie.id}`} >v2</Link>
+          </div>
         ))
       ) : (
         <MovieSearchResultSkeleton />

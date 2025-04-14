@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { handleBackground } from '@slidev/theme-default/layoutHelper';
+import { handleBackground } from '@slidev/theme-seriph/layoutHelper';
 
 const props = defineProps({
   image: {
