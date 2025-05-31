@@ -3,3 +3,5 @@ cloudflair-remake/movie-remake/wrangler.toml
 cloudflair-remake/movie-remake/wrangler.toml
 cloudflair-remake/movie-remake/wrangler.toml
 cloudflare-remake/movie-remake/wrangler.toml
+migration/.env
+/migration/node_modules

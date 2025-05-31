@@ -1,0 +1,18 @@
+{
+  "name": "migration",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "migrate": "node -r dotenv/config migrate-to-uploadthing.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "form-data": "^4.0.2",
+    "node-fetch": "^3.3.2",
+    "uploadthing": "^7.7.2"
+  }
+}
