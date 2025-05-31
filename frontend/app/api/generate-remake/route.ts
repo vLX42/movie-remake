@@ -4,56 +4,76 @@ import { UTApi, UTFile } from "uploadthing/server";
 
 export const runtime = "edge";
 
-const APP_ID = process.env.UPLOADTHING_APP_ID; // e.g. "abcde12345"
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
+const APP_ID = process.env.UPLOADTHING_APP_ID!;
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const utapi = new UTApi({ token: process.env.UPLOADTHING_TOKEN });
 
-async function downloadImageWithRetry(imageURL: string, retries = 10, delay = 600) {
+
+async function downloadImage(imageURL: string) {
+  const res = await fetch(imageURL, { cache: "no-store" });
+  if (!res.ok) throw new Error(`Image download failed: HTTP ${res.status}`);
+  return Buffer.from(await res.arrayBuffer());           // <─ returns Buffer
+}
+
+
+async function downloadImageWithRetry(
+  imageURL: string,
+  retries = 20,          // was 10
+  delay   = 1_000        // was 600 ms
+) {
   for (let i = 0; i <= retries; i++) {
     try {
-      const res = await fetch(imageURL);
+      const res = await fetch(imageURL, { cache: "no-store" });
       if (res.ok) return Buffer.from(await res.arrayBuffer());
-    } catch {}
-    if (i < retries) await new Promise((resolve) => setTimeout(resolve, delay));
-  }
-  throw new Error("Image download failed");
-}
 
-async function generateImageReplicate(prompt: string) {
-  const response = await fetch("https://api.replicate.com/v1/predictions", {
-    method: "POST",
-    headers: {
-      Authorization: `Token ${process.env.REPLICATE_API_TOKEN}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      version: "7ca7f0d3a51cd993449541539270971d38a24d9a0d42f073caf25190d41346d7",
-      input: {
-        prompt,
-        width: 512,
-        height: 512,
-        negative_prompt:
-          "lowres, text, error, cropped, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, out of frame, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck"
+      // 403/404 from replicate.delivery == file not propagated yet
+      if (![403, 404].includes(res.status)) {
+        throw new Error(`HTTP ${res.status}`);
       }
-    })
-  });
+    } catch (err) {
+      if (i === retries) throw err;       // give up at the end
+    }
 
-  const { id } = await response.json();
-
-  while (true) {
-    const poll = await fetch(`https://api.replicate.com/v1/predictions/${id}`, {
-      headers: { Authorization: `Token ${process.env.REPLICATE_API_TOKEN}` }
-    });
-    const result = await poll.json();
-    if (result.status === "succeeded") return result.output[result.output.length - 1];
-    if (result.status === "failed") throw new Error("Image generation failed");
-    await new Promise((r) => setTimeout(r, 1000));
+    // simple exponential back-off: 1s, 1.3s, 1.7s, …
+    await new Promise(r => setTimeout(r, delay * Math.pow(1.3, i)));
   }
+  throw new Error("Image download failed (timeout)");
 }
+
+export async function generateImageImagen4(prompt: string): Promise<string> {
+  const res = await fetch(
+    "https://api.replicate.com/v1/models/google/imagen-4/predictions",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.REPLICATE_API_TOKEN}`,
+        "Content-Type": "application/json",
+        Prefer: "wait",
+      },
+      body: JSON.stringify({
+        input: {
+          prompt,
+          aspect_ratio: "16:9",
+          safety_filter_level: "block_medium_and_above",
+        },
+      }),
+    },
+  );
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Replicate error ${res.status}: ${text}`);
+  }
+
+  const { output } = (await res.json()) as { output?: string };
+
+  if (!output?.length) {
+    throw new Error("Replicate returned no image URLs");
+  }
+
+  return output;   // guaranteed string
+}
+
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -62,41 +82,37 @@ export async function GET(req: NextRequest) {
   const movieId = searchParams.get("movieId");
 
   if (!title || !releaseDate || !movieId) {
-    return new Response("Missing title, releaseDate, or movieId", { status: 400 });
+    return new Response("Missing title, releaseDate, or movieId", {
+      status: 400,
+    });
   }
 
   const jsonFile = `${movieId}.json`;
   const imageFile = `${movieId}.jpg`;
-
-  // Check UploadThing cache first
-  try {
-    const files = await utapi.listFiles();
-    const jsonFileMeta = files.files.find((f) => f.name === jsonFile);
-    const imageFileMeta = files.files.find((f) => f.name === imageFile);
-    console.log(imageFileMeta, jsonFileMeta);
-    if (jsonFileMeta && imageFileMeta) {
-      const jsonUrl = `https://utfs.io/f/${jsonFileMeta.key}`;
-      const imageUrl = `https://utfs.io/f/${imageFileMeta.key}`;
-      const res = await fetch(jsonUrl);
-      if (res.ok) {
-        const cached = await res.json();
-        cached.imageURL = imageUrl;
-        return new Response(JSON.stringify(cached), {
-          headers: { "Content-Type": "application/json" }
-        });
-      }
-    }
-  } catch (err) {
-    console.warn(`No cache hit for ${movieId}:`, err);
-  }
-
-  // Create a streaming response
   const encoder = new TextEncoder();
-  
+
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        // Step 1: Generate movie synopsis
+        const files = await utapi.listFiles();
+        const jsonMeta = files.files.find((f) => f.name === jsonFile);
+        const imgMeta = files.files.find((f) => f.name === imageFile);
+
+        if (jsonMeta && imgMeta) {
+          const jsonUrl = `https://utfs.io/f/${jsonMeta.key}`;
+          const imgUrl = `https://utfs.io/f/${imgMeta.key}`;
+          const cached = await (await fetch(jsonUrl)).json();
+          cached.imageURL = imgUrl;
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({ type: "complete", data: cached })}\n\n`
+            )
+          );
+          controller.close();
+          return;
+        }
+
+        let synopsis = "";
         const synopsisPrompt = `Create a modern version of the movie called "${title}" that was released in ${releaseDate}.
 
 Write a maximum 275 word synopsis of the movie. Include 2–3 of these themes:
@@ -112,123 +128,178 @@ Add a fan-service cameo from the original cast.
 
 NO markdown code, Don't write the new title of the movie!
 
-Pick new actors. One can be famous. Include what they're known for.`;
+Pick new actors. One can be famous. Include what they're known for. Be creative when selecting actors, make a choice based on the time stam right now`;
 
-        const synopsisResponse = await openai.chat.completions.create({
+        const synopsisStream = await openai.chat.completions.create({
           model: "gpt-4o-mini",
+          stream: true,
           messages: [{ role: "user", content: synopsisPrompt }],
           temperature: 0.9,
           max_tokens: 650,
         });
 
-        const synopsis = synopsisResponse.choices[0]?.message?.content?.trim() || "";
-        
-        // Send synopsis
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({
-          type: 'synopsis',
-          content: synopsis 
-        })}\n\n`));
+        for await (const chunk of synopsisStream) {
+          const token = chunk.choices?.[0]?.delta?.content;
+          if (token) {
+            synopsis += token;
+            controller.enqueue(
+              encoder.encode(
+                `data: ${JSON.stringify({
+                  type: "synopsis_token",
+                  content: token,
+                })}\n\n`
+              )
+            );
+          }
+        }
 
-        // Step 2: Generate title
-        const titleResponse = await openai.chat.completions.create({
+        controller.enqueue(
+          encoder.encode(
+            `data: ${JSON.stringify({ type: "synopsis_done" })}\n\n`
+          )
+        );
+
+        let newTitle = "";
+        const newTitleStream = await openai.chat.completions.create({
           model: "gpt-4o-mini",
+          stream: true,
           messages: [
-            { role: "user", content: "Find a title for this remake. Return title only." }
+            {
+              role: "system",
+              content:
+                "You are a film‑marketing copywriter. Reply with a concise remake title only, no quotes or extra text.",
+            },
+            {
+              role: "user",
+              content: `Synopsis:\n${synopsis}\n\nProvide the new title.`,
+            },
           ],
-          temperature: 0.9,
-          max_tokens: 50,
+          temperature: 0.8,
+          max_tokens: 20,
         });
 
-        const rawTitle = titleResponse.choices[0]?.message?.content?.trim() || "";
-        // Clean up the title - remove quotes, extra text, etc.
-        const newTitle = rawTitle
-          .replace(/^["']|["']$/g, '') // Remove surrounding quotes
-          .replace(/^Title:\s*/i, '') // Remove "Title:" prefix
-          .replace(/^\d+\.\s*/, '') // Remove numbering like "1. "
-          .split('\n')[0] // Take only first line
-          .trim();
-        
-        // Send title
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ 
-          type: 'title', 
-          content: newTitle 
-        })}\n\n`));
+        for await (const chunk of newTitleStream) {
+          const token = chunk.choices?.[0]?.delta?.content;
+          if (token) {
+            newTitle += token;
+            controller.enqueue(
+              encoder.encode(
+                `data: ${JSON.stringify({
+                  type: "title_token",
+                  content: token,
+                })}\n\n`
+              )
+            );
+          }
+        }
 
-        // Step 3: Generate image prompt
-        const imagePromptResponse = await openai.chat.completions.create({
+        controller.enqueue(
+          encoder.encode(`data: ${JSON.stringify({ type: "title_done" })}\n\n`)
+        );
+
+        let imgPrompt = "";
+        const promptStream = await openai.chat.completions.create({
           model: "gpt-4o-mini",
+          stream: true,
           messages: [
-            { role: "user", content: `Based on this movie synopsis: "${synopsis}" and title: "${newTitle}", create a character poster prompt using the lead actor. No character name.
-
+            {
+              role: "user",
+              content: `Based on this movie synopsis: "${synopsis}" and title: "${newTitle}", create a character poster prompt using the lead actor. No character name.
+Describe the lead actor in detail, including their appearance, clothing, and any notable scene in the movie.
 Brief visual style (keywords only). 85 words max. Like:
-portrait of [actor], rim lighting, moody, film grain, ultra sharp, etc.` }
+portrait of [actor], rim lighting, moody, film grain, ultra sharp, etc.`,
+            },
           ],
           temperature: 0.9,
           max_tokens: 100,
         });
 
-        const imagePrompt = imagePromptResponse.choices[0]?.message?.content?.trim() || "";
+        for await (const chunk of promptStream) {
+          const token = chunk.choices?.[0]?.delta?.content;
+          if (token) {
+            imgPrompt += token;
+            controller.enqueue(
+              encoder.encode(
+                `data: ${JSON.stringify({
+                  type: "image_prompt_token",
+                  content: token,
+                })}\n\n`
+              )
+            );
+          }
+        }
 
-        // Step 4: Generate and upload image
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ 
-          type: 'image_generating', 
-          content: 'Generating image...' 
-        })}\n\n`));
+        controller.enqueue(
+          encoder.encode(
+            `data: ${JSON.stringify({ type: "image_prompt_done" })}\n\n`
+          )
+        );
 
-        const replicateImageUrl = await generateImageReplicate(imagePrompt);
-        const imageBuffer = await downloadImageWithRetry(replicateImageUrl);
+        controller.enqueue(
+          encoder.encode(
+            `data: ${JSON.stringify({
+              type: "image_generating",
+              content: "Generating image...",
+            })}\n\n`
+          )
+        );
 
-        // Upload files to UploadThing
+        const finalImgUrl = `https://${APP_ID}.ufs.sh/f/${movieId}.jpg`;
+        console.log("imagePrompt", imgPrompt);
+        const imagen4Url = await generateImageImagen4(imgPrompt);
+        const imgBuffer = await downloadImageWithRetry(imagen4Url);
+
         const metadata = {
           originalTitle: title,
           title: newTitle,
           description: synopsis,
-          imageURL: ""
+          imageURL: finalImgUrl,
         };
-
         const jsonBlob = new Blob([JSON.stringify(metadata, null, 2)], {
-          type: "application/json"
-        });
-
-        const jsonUTFile = new UTFile([jsonBlob], jsonFile, {
           type: "application/json",
-          customId: jsonFile
         });
-
-        const imageUTFile = new UTFile([imageBuffer], imageFile, {
-          type: "image/jpeg",
-          customId: imageFile
-        });
-
-        const [uploadedJson, uploadedImg] = await utapi.uploadFiles([
-          jsonUTFile,
-          imageUTFile
+        await utapi.uploadFiles([
+          new UTFile([jsonBlob], jsonFile, {
+            type: "application/json",
+            customId: jsonFile,
+          }),
+          new UTFile([imgBuffer], imageFile, {
+            type: "image/jpeg",
+            customId: imageFile,
+          }),
         ]);
 
-      const finalImageUrl = `https://${APP_ID}.ufs.sh/f/${movieId}.jpg`;
+        controller.enqueue(
+          encoder.encode(
+            `data: ${JSON.stringify({
+              type: "image_complete",
+              content: finalImgUrl,
+            })}\n\n`
+          )
+        );
 
-        // Send final image URL
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ 
-          type: 'image_complete', 
-          content: finalImageUrl
-        })}\n\n`));
-
-        // Send completion signal
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ 
-          type: 'complete',
-          data: {
-            originalTitle: title,
-            title: newTitle,
-            description: synopsis,
-            imageURL: finalImageUrl
-          }
-        })}\n\n`));
-
-      } catch (error) {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ 
-          type: 'error', 
-          content: error instanceof Error ? error.message : 'Unknown error' 
-        })}\n\n`));
+        controller.enqueue(
+          encoder.encode(
+            `data: ${JSON.stringify({
+              type: "complete",
+              data: {
+                originalTitle: title,
+                title: newTitle,
+                description: synopsis,
+                imageURL: finalImgUrl,
+              },
+            })}\n\n`
+          )
+        );
+      } catch (err) {
+        controller.enqueue(
+          encoder.encode(
+            `data: ${JSON.stringify({
+              type: "error",
+              content: err instanceof Error ? err.message : "Unknown error",
+            })}\n\n`
+          )
+        );
       } finally {
         controller.close();
       }
@@ -237,9 +308,9 @@ portrait of [actor], rim lighting, moody, film grain, ultra sharp, etc.` }
 
   return new Response(stream, {
     headers: {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      Connection: "keep-alive",
     },
   });
 }

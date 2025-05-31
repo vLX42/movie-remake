@@ -1,190 +1,127 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { Loader } from "./loader";
-import styles from "./remake.module.css";
 import { ReloadableImage } from "./reload-image";
 import { LoadingImage } from "./loading-image";
-import Link from "next/link";
+import styles from "./remake.module.css";
 
-const TextFormatter = ({
-  text,
-  className,
-}: {
-  text: string;
-  className: string;
-}) => {
-  const paragraphs = text
-    .split("\n")
-    .map((paragraph, index) => <p key={index}>{paragraph}</p>);
-  return <div className={className}>{paragraphs}</div>;
-};
+const TextFormatter = ({ text, className }: { text: string; className: string }) => (
+  <div className={className}>
+    {text.split("\n").map((p, i) => (
+      <p key={i}>{p}</p>
+    ))}
+  </div>
+);
 
-const Remake = ({
-  releaseDate,
-  title,
-  movieId,
-  remake,
-}: {
+interface CachedRemake {
+  description?: string;
+  title?: string;
+  imageURL?: string;
+}
+
+interface RemakeProps {
   releaseDate: string;
   title: string;
   movieId: number;
-  remake: any;
-}) => {
-  const [description, setDescription] = useState(remake?.description || "");
-  const [remakeTitle, setRemakeTitle] = useState(remake?.title || "");
-  const [imageUrl, setImageUrl] = useState(remake?.imageURL || "");
+  remake: CachedRemake | null;
+}
+
+const Remake = ({ releaseDate, title, movieId, remake }: RemakeProps) => {
+  const [description, setDescription] = useState(remake?.description ?? "");
+  const [remakeTitle, setRemakeTitle] = useState(remake?.title ?? "");
+  const [imageUrl, setImageUrl] = useState(remake?.imageURL ?? "");
   const [isImageGenerating, setIsImageGenerating] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
-
-  const delayedSetDescription = useCallback(
-    (newText: string, delay: number = 50) => {
-      const words = newText.split(" ");
-      let currentIndex = 0;
-      setDescription(""); // Reset description
-
-      const updateWord = () => {
-        if (currentIndex < words.length) {
-          setDescription((prevText: string) => {
-            return currentIndex === 0 
-              ? words[currentIndex] 
-              : prevText + " " + words[currentIndex];
-          });
-          currentIndex++;
-          setTimeout(updateWord, delay);
-        }
-      };
-
-      updateWord();
-    },
-    []
-  );
-
-  const delayedSetTitle = useCallback(
-    (newTitle: string, delay: number = 100) => {
-      if (!newTitle || newTitle === 'undefined') return;
-      
-      const chars = newTitle.split("");
-      let currentIndex = 0;
-      setRemakeTitle(""); // Reset title
-
-      const updateChar = () => {
-        if (currentIndex < chars.length) {
-          setRemakeTitle((prevTitle: string) => prevTitle + chars[currentIndex]);
-          currentIndex++;
-          setTimeout(updateChar, delay);
-        }
-      };
-
-      updateChar();
-    },
-    []
-  );
+  const [isComplete, setIsComplete] = useState(!!remake);
 
   useEffect(() => {
-    if (remake) {
-      setIsComplete(true);
-      return;
-    }
+    if (remake) return;
 
-    const fetchRemake = async () => {
-      try {
-        const response = await fetch(
-          `/api/generate-remake?releaseDate=${releaseDate}&title=${encodeURIComponent(
-            title
-          )}&movieId=${movieId}`
-        );
+    const abortCtrl = new AbortController();
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch remake');
-        }
+    const run = async () => {
+      const res = await fetch(
+        `/api/generate-remake?releaseDate=${releaseDate}&title=${encodeURIComponent(title)}&movieId=${movieId}`,
+        { signal: abortCtrl.signal },
+      );
+      if (!res.ok) throw new Error("Failed to fetch remake");
 
-        const reader = response.body?.getReader();
-        const decoder = new TextDecoder();
+      const reader = res.body?.getReader();
+      const decoder = new TextDecoder();
+      if (!reader) return;
 
-        if (!reader) return;
+      let buffer = "";
+      let desc = "";
+      let titleBuf = "";
 
-        let buffer = '';
-        let synopsisReceived = false;
-        let titleReceived = false;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        let sepIdx;
+        while ((sepIdx = buffer.indexOf("\n\n")) !== -1) {
+          const raw = buffer.slice(0, sepIdx).trim();
+          buffer = buffer.slice(sepIdx + 2);
 
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n');
-          
-          // Keep the last incomplete line in buffer
-          buffer = lines.pop() || '';
+          if (!raw.startsWith("data: ")) continue;
+          const payload = JSON.parse(raw.slice(6));
 
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              try {
-                const data = JSON.parse(line.slice(6));
-                
-                switch (data.type) {
-                  case 'synopsis':
-                    if (!synopsisReceived) {
-                      synopsisReceived = true;
-                      delayedSetDescription(data.content, 50);
-                    }
-                    break;
-                    
-                  case 'title':
-                    if (!titleReceived && synopsisReceived && data.content && data.content !== 'undefined') {
-                      titleReceived = true;
-                      // Wait for description animation to finish before showing title
-                      const synopsisText = description || '';
-                      const descriptionWords = synopsisText.split(' ').length;
-                      const descriptionDelay = Math.max(3000, descriptionWords * 50);
-                      setTimeout(() => delayedSetTitle(data.content, 100), descriptionDelay);
-                    }
-                    break;
-                    
-                  case 'image_generating':
-                    setIsImageGenerating(true);
-                    break;
-                    
-                  case 'image_complete':
-                    setIsImageGenerating(false);
-                    setImageUrl(data.content);
-                    break;
-                    
-                  case 'complete':
-                    setIsComplete(true);
-                    break;
-                    
-                  case 'error':
-                    console.error('Stream error:', data.content);
-                    break;
-                }
-              } catch (e) {
-                console.error('Failed to parse SSE data:', e);
-              }
-            }
+          switch (payload.type) {
+            case "synopsis_token":
+              desc += payload.content;
+              setDescription(desc);
+              break;
+            case "synopsis_done":
+              break;
+            case "title_token":
+              titleBuf += payload.content;
+              setRemakeTitle(titleBuf);
+              break;
+            case "title_done":
+              break;
+            case "image_prompt_token":
+              break;
+            case "image_prompt_done":
+              break;
+            case "image_generating":
+              setIsImageGenerating(true);
+              break;
+            case "image_complete":
+              setIsImageGenerating(false);
+              setImageUrl(payload.content);
+              break;
+            case "complete":
+              setIsComplete(true);
+              break;
+            case "error":
+              console.error("Stream error:", payload.content);
+              break;
           }
         }
-      } catch (err) {
-        console.error("Fetch error:", err);
       }
     };
 
-    fetchRemake();
-  }, [releaseDate, title, movieId, remake, delayedSetDescription, delayedSetTitle]);
+    run().catch((err) => console.error(err));
+
+    return () => abortCtrl.abort();
+  }, [releaseDate, title, movieId, remake]);
 
   return (
     <div>
       <h1 className={styles.h1}>
-        {remakeTitle || (
+        {remakeTitle ? (
+          remakeTitle
+        ) : (
           <>
             Generating <Loader />
           </>
         )}
       </h1>
 
-      <TextFormatter text={description} className={styles.description} />
+      {description && <TextFormatter text={description} className={styles.description} />}
 
-      {(remakeTitle && description) && (
+      {remakeTitle && description && (
         <>
           {imageUrl ? (
             <ReloadableImage
@@ -202,7 +139,7 @@ const Remake = ({
           ) : (
             <LoadingImage />
           )}
-          
+
           {isComplete && (
             <Link className={styles.back} href="/">
               ← Generate another
