@@ -1,15 +1,15 @@
-import { Suspense } from "react"
-import Link from "next/link"
-import { getMovie } from "@/lib/get-movie"
-import { OriginalMovie, MovieCoverSkeleton } from "@/components/original-movie"
-import type { Metadata } from "next"
+import { Suspense } from "react";
+import Link from "next/link";
+import { getMovie } from "@/lib/get-movie";
+import { OriginalMovie, MovieCoverSkeleton } from "@/components/original-movie";
+import type { Metadata } from "next";
 
 interface PageProps {
-  params: { movieId: string }
+  params: { movieId: string };
 }
 
 export default function RemakePage({ params }: PageProps) {
-  const { movieId } = params
+  const { movieId } = params;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
@@ -30,29 +30,37 @@ export default function RemakePage({ params }: PageProps) {
         </Suspense>
       </div>
     </div>
-  )
+  );
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   try {
-    const movie = await getMovie(params.movieId)
+    const movie = await getMovie(params.movieId);
 
     // Base title and description
-    const title = movie.remake?.title || `${movie.title} Remake`
+    const title = movie.remake?.title || `${movie.title} Remake`;
     const description =
-      movie.remake?.description || `Generate a Hollywood remake of ${movie.title} with AI-powered creativity`
+      movie.remake?.description ||
+      `Generate a Hollywood remake of ${movie.title} with AI-powered creativity`;
 
     // Image URLs
-    const remakeImageUrl = movie.remake?.imageURL
-    const originalImageUrl = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : null
-    const imageUrl = remakeImageUrl || originalImageUrl
+    const remakeImageUrl = movie.remake?.imageURL;
+    const originalImageUrl = movie.poster_path
+      ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+      : null;
+    const imageUrl = remakeImageUrl || originalImageUrl;
 
     return {
       title: `${title} | Hollywood Movie Remake Generator`,
-      description: description.substring(0, 160) + (description.length > 160 ? "..." : ""),
+      description:
+        description.substring(0, 160) + (description.length > 160 ? "..." : ""),
       openGraph: {
         title: title,
-        description: description.substring(0, 160) + (description.length > 160 ? "..." : ""),
+        description:
+          description.substring(0, 160) +
+          (description.length > 160 ? "..." : ""),
         images: imageUrl
           ? [
               {
@@ -69,14 +77,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       twitter: {
         card: "summary_large_image",
         title: title,
-        description: description.substring(0, 160) + (description.length > 160 ? "..." : ""),
+        description:
+          description.substring(0, 160) +
+          (description.length > 160 ? "..." : ""),
         images: imageUrl ? [imageUrl] : [],
       },
-    }
+    };
   } catch {
     return {
       title: "Movie Remake | Hollywood Movie Remake Generator",
-      description: "Generate Hollywood movie remakes with AI-powered creativity",
-    }
+      description:
+        "Generate Hollywood movie remakes with AI-powered creativity",
+    };
   }
 }
