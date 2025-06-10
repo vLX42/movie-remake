@@ -101,6 +101,7 @@ export async function GET(req: NextRequest) {
           return;
         }
 
+        const movie = await getMovie(movieId);
         const existingPlot = movie?.overview || "";
 
         let existingCast = "";
