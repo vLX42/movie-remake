@@ -143,7 +143,7 @@ NO markdown code, Don't write the new title of the movie!
 Pick new actors. One can be famous, maybe has done something simular in the past. Include what they're known for. Be creative when selecting actors, make a choice based on the time stamp right now`;
 
         const synopsisStream = await openai.chat.completions.create({
-          model: "gpt-4o-mini",
+          model: "gpt-4o",
           stream: true,
           messages: [{ role: "user", content: synopsisPrompt }],
           temperature: 0.9,
@@ -187,10 +187,12 @@ Pick new actors. One can be famous, maybe has done something simular in the past
             },
             {
               role: "user",
-              content: `Synopsis:
+              content: `New synopsis:
 ${synopsis}
 
-Provide the new title.`,
+Original title: "${title}"
+
+Provide the new title. Don't make it sound like a sequel or prequel. Make it sound like a modern Hollywood movie title.`,
             },
           ],
           temperature: 0.8,
@@ -222,7 +224,7 @@ Provide the new title.`,
 
         let imgPrompt = "";
         const promptStream = await openai.chat.completions.create({
-          model: "gpt-4o-mini",
+          model: "gpt-4o",
           stream: true,
           messages: [
             {
