@@ -234,7 +234,7 @@ portrait of [actor], ultra realistic, moody, film grain, ultra sharp, Movie post
             },
           ],
           temperature: 0.9,
-          max_tokens: 100,
+          max_tokens: 300,
         });
 
         for await (const chunk of promptStream) {
