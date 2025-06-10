@@ -138,6 +138,10 @@ Write a maximum 275 word synopsis of the movie. Include 2–3 of these themes:
 
 Add a fan-service cameo from the original cast.
 
+If the original moive is set in the before 1900 keep the setting in the past, but make it more modern. If the original movie is set in the 1900s or later, set it in the present day or simular time period.
+
+If it's a fantasy or sci-fi movie, keep the genre but update the technology and themes to be more relevant to today's audience.
+
 NO markdown code, Don't write the new title of the movie!
 
 Pick new actors. One can be famous, maybe has done something simular in the past. Include what they're known for. Be creative when selecting actors, make a choice based on the time stamp right now`;
