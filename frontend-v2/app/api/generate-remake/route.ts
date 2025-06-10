@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import { NextRequest } from "next/server";
 import { UTApi, UTFile } from "uploadthing/server";
+import { getMovie } from "@/lib/get-movie";
 
 export const runtime = "edge";
 
@@ -11,28 +12,23 @@ const utapi = new UTApi({ token: process.env.UPLOADTHING_TOKEN });
 async function downloadImage(imageURL: string) {
   const res = await fetch(imageURL, { cache: "no-store" });
   if (!res.ok) throw new Error(`Image download failed: HTTP ${res.status}`);
-  return Buffer.from(await res.arrayBuffer()); // <─ returns Buffer
+  return Buffer.from(await res.arrayBuffer());
 }
 
 async function downloadImageWithRetry(
   imageURL: string,
-  retries = 20, // was 10
-  delay = 1_000 // was 600 ms
+  retries = 20,
+  delay = 1_000
 ) {
   for (let i = 0; i <= retries; i++) {
     try {
       const res = await fetch(imageURL, { cache: "no-store" });
       if (res.ok) return Buffer.from(await res.arrayBuffer());
-
-      // 403/404 from replicate.delivery == file not propagated yet
-      if (![403, 404].includes(res.status)) {
+      if (![403, 404].includes(res.status))
         throw new Error(`HTTP ${res.status}`);
-      }
     } catch (err) {
-      if (i === retries) throw err; // give up at the end
+      if (i === retries) throw err;
     }
-
-    // simple exponential back-off: 1s, 1.3s, 1.7s, …
     await new Promise((r) => setTimeout(r, delay * Math.pow(1.3, i)));
   }
   throw new Error("Image download failed (timeout)");
@@ -58,18 +54,12 @@ async function generateImageImagen4(prompt: string): Promise<string> {
     }
   );
 
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Replicate error ${res.status}: ${text}`);
-  }
+  if (!res.ok)
+    throw new Error(`Replicate error ${res.status}: ${await res.text()}`);
 
-  const { output } = (await res.json()) as { output?: string };
-
-  if (!output?.length) {
-    throw new Error("Replicate returned no image URLs");
-  }
-
-  return output; // guaranteed string
+  const { output } = await res.json();
+  if (!output?.length) throw new Error("Replicate returned no image URLs");
+  return output;
 }
 
 export async function GET(req: NextRequest) {
@@ -102,15 +92,39 @@ export async function GET(req: NextRequest) {
           cached.imageURL = imgUrl;
           controller.enqueue(
             encoder.encode(
-              `data: ${JSON.stringify({ type: "complete", data: cached })}\n\n`
+              `data: ${JSON.stringify({ type: "complete", data: cached })}
+
+`
             )
           );
           controller.close();
           return;
         }
 
+        const existingPlot = movie?.overview || "";
+
+        let existingCast = "";
+        try {
+          const res = await fetch(
+            `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${process.env.THEMOVIEDB_API_KEY}`
+          );
+          if (res.ok) {
+            const credits = await res.json();
+            const topCast = credits.cast?.slice(0, 5) || [];
+            existingCast = topCast
+              .map((c: any) => `${c.name} as ${c.character}`)
+              .join(", ");
+          }
+        } catch (e) {
+          console.warn("Failed to fetch cast info", e);
+        }
+
         let synopsis = "";
-        const synopsisPrompt = `Create a modern version of the movie called "${title}" that was released in ${releaseDate}.
+        const synopsisPrompt = `Create a modern version of the movie called \"${title}\" that was released in ${releaseDate}.
+
+Original Plot: ${existingPlot}
+
+Main Cast: ${existingCast}
 
 Write a maximum 275 word synopsis of the movie. Include 2–3 of these themes:
 - Diverse casting
@@ -125,7 +139,7 @@ Add a fan-service cameo from the original cast.
 
 NO markdown code, Don't write the new title of the movie!
 
-Pick new actors. One can be famous. Include what they're known for. Be creative when selecting actors, make a choice based on the time stam right now`;
+Pick new actors. One can be famous, maybe has done something simular in the past. Include what they're known for. Be creative when selecting actors, make a choice based on the time stamp right now`;
 
         const synopsisStream = await openai.chat.completions.create({
           model: "gpt-4o-mini",
@@ -144,7 +158,9 @@ Pick new actors. One can be famous. Include what they're known for. Be creative 
                 `data: ${JSON.stringify({
                   type: "synopsis_token",
                   content: token,
-                })}\n\n`
+                })}
+
+`
               )
             );
           }
@@ -152,7 +168,9 @@ Pick new actors. One can be famous. Include what they're known for. Be creative 
 
         controller.enqueue(
           encoder.encode(
-            `data: ${JSON.stringify({ type: "synopsis_done" })}\n\n`
+            `data: ${JSON.stringify({ type: "synopsis_done" })}
+
+`
           )
         );
 
@@ -168,7 +186,10 @@ Pick new actors. One can be famous. Include what they're known for. Be creative 
             },
             {
               role: "user",
-              content: `Synopsis:\n${synopsis}\n\nProvide the new title.`,
+              content: `Synopsis:
+${synopsis}
+
+Provide the new title.`,
             },
           ],
           temperature: 0.8,
@@ -184,14 +205,18 @@ Pick new actors. One can be famous. Include what they're known for. Be creative 
                 `data: ${JSON.stringify({
                   type: "title_token",
                   content: token,
-                })}\n\n`
+                })}
+
+`
               )
             );
           }
         }
 
         controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify({ type: "title_done" })}\n\n`)
+          encoder.encode(`data: ${JSON.stringify({ type: "title_done" })}
+
+`)
         );
 
         let imgPrompt = "";
@@ -201,10 +226,10 @@ Pick new actors. One can be famous. Include what they're known for. Be creative 
           messages: [
             {
               role: "user",
-              content: `Based on this movie synopsis: "${synopsis}" and title: "${newTitle}", create a character poster prompt using the lead actor. No character name.
+              content: `Based on this movie synopsis: \"${synopsis}\" and title: \"${newTitle}\", create a character poster prompt using the lead actor. No character name.
 Describe the lead actor in detail, including their appearance, clothing, and any notable scene in the movie.
-Brief visual style (keywords only). 85 words max. Like:
-portrait of [actor], rim lighting, moody, film grain, ultra sharp, etc.`,
+Brief visual style (keywords only). 185 words max. Like:
+portrait of [actor], ultra realistic, moody, film grain, ultra sharp, Movie poster, etc.`,
             },
           ],
           temperature: 0.9,
@@ -220,7 +245,9 @@ portrait of [actor], rim lighting, moody, film grain, ultra sharp, etc.`,
                 `data: ${JSON.stringify({
                   type: "image_prompt_token",
                   content: token,
-                })}\n\n`
+                })}
+
+`
               )
             );
           }
@@ -228,21 +255,23 @@ portrait of [actor], rim lighting, moody, film grain, ultra sharp, etc.`,
 
         controller.enqueue(
           encoder.encode(
-            `data: ${JSON.stringify({ type: "image_prompt_done" })}\n\n`
+            `data: ${JSON.stringify({ type: "image_prompt_done" })}
+
+`
           )
         );
-
         controller.enqueue(
           encoder.encode(
             `data: ${JSON.stringify({
               type: "image_generating",
               content: "Generating image...",
-            })}\n\n`
+            })}
+
+`
           )
         );
 
         const finalImgUrl = `https://${APP_ID}.ufs.sh/f/${movieId}.jpg`;
-        console.log("imagePrompt", imgPrompt);
         const imagen4Url = await generateImageImagen4(imgPrompt);
         const imgBuffer = await downloadImageWithRetry(imagen4Url);
 
@@ -252,9 +281,11 @@ portrait of [actor], rim lighting, moody, film grain, ultra sharp, etc.`,
           description: synopsis,
           imageURL: finalImgUrl,
         };
+
         const jsonBlob = new Blob([JSON.stringify(metadata, null, 2)], {
           type: "application/json",
         });
+
         await utapi.uploadFiles([
           new UTFile([jsonBlob], jsonFile, {
             type: "application/json",
@@ -271,10 +302,11 @@ portrait of [actor], rim lighting, moody, film grain, ultra sharp, etc.`,
             `data: ${JSON.stringify({
               type: "image_complete",
               content: finalImgUrl,
-            })}\n\n`
+            })}
+
+`
           )
         );
-
         controller.enqueue(
           encoder.encode(
             `data: ${JSON.stringify({
@@ -285,7 +317,9 @@ portrait of [actor], rim lighting, moody, film grain, ultra sharp, etc.`,
                 description: synopsis,
                 imageURL: finalImgUrl,
               },
-            })}\n\n`
+            })}
+
+`
           )
         );
       } catch (err) {
@@ -294,7 +328,9 @@ portrait of [actor], rim lighting, moody, film grain, ultra sharp, etc.`,
             `data: ${JSON.stringify({
               type: "error",
               content: err instanceof Error ? err.message : "Unknown error",
-            })}\n\n`
+            })}
+
+`
           )
         );
       } finally {
