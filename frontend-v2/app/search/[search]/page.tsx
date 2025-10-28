@@ -18,14 +18,14 @@ export default async function SearchPage({ params }: PageProps) {
         <MovieSearchResult promise={searchMovies(searchTerm)} />
       </Suspense>
     </div>
-  );
+  )
 }
 
 export async function generateMetadata({ params }: PageProps) {
-  const searchTerm = decodeURIComponent((await params).search);
+  const searchTerm = decodeURIComponent((await params).search)
 
   return {
     title: `Search: ${searchTerm} | Hollywood Movie Remake Generator`,
     description: `Search results for "${searchTerm}" - Find movies to reimagine and remake in Hollywood style`,
-  };
+  }
 }

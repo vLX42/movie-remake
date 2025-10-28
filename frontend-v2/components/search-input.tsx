@@ -1,55 +1,55 @@
-"use client";
+"use client"
 
-import { useParams, useRouter } from "next/navigation";
-import { useRef, useState, useTransition } from "react";
+import { useParams, useRouter } from "next/navigation"
+import { useRef, useState, useTransition } from "react"
 
 interface SearchInputProps {
-  placeholder?: string;
-  className?: string;
+  placeholder?: string
+  className?: string
 }
 
 export function SearchInput({
   placeholder = "Enter a movie title...",
   className = "",
 }: SearchInputProps) {
-  const router = useRouter();
-  const params = useParams<{ search?: string }>();
-  const [searchTerm, setSearchTerm] = useState<string>();
-  const [isPending, startTransition] = useTransition();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const router = useRouter()
+  const params = useParams<{ search?: string }>()
+  const [searchTerm, setSearchTerm] = useState<string>()
+  const [isPending, startTransition] = useTransition()
+  const inputRef = useRef<HTMLInputElement>(null)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const navigateToSearch = (value: string) => {
-    const trimmed = value.trim();
-    const encoded = encodeURIComponent(trimmed);
+    const trimmed = value.trim()
+    const encoded = encodeURIComponent(trimmed)
 
     if (trimmed.length >= 2) {
       startTransition(() => {
-        router.push(`/search/${encoded}`);
-      });
+        router.push(`/search/${encoded}`)
+      })
     } else if (trimmed.length === 0) {
       startTransition(() => {
-        router.push("/");
-      });
+        router.push("/")
+      })
     }
-  };
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchTerm(value);
+    const value = e.target.value
+    setSearchTerm(value)
 
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
 
     timeoutRef.current = setTimeout(() => {
-      navigateToSearch(value);
-    }, 300);
-  };
+      navigateToSearch(value)
+    }, 300)
+  }
 
   const invalidSearchTerm = !!(
     searchTerm &&
     searchTerm.length > 0 &&
     searchTerm.length < 2
-  );
+  )
 
   return (
     <div className="relative">
@@ -80,5 +80,5 @@ export function SearchInput({
         </div>
       )}
     </div>
-  );
+  )
 }

@@ -1,17 +1,17 @@
-"use client";
+"use client"
 
-import { SearchInput } from "./search-input";
+import { SearchInput } from "./search-input"
 
 interface SearchContainerProps {
-  searchTerm?: string;
-  size?: "large" | "medium";
+  searchTerm?: string
+  size?: "large" | "medium"
 }
 
 export function SearchContainer({ size = "large" }: SearchContainerProps) {
   const sizeClasses = {
     large: "text-2xl md:text-3xl p-6",
     medium: "text-xl md:text-2xl p-4",
-  };
+  }
 
   return (
     <div className="mb-8">
@@ -20,5 +20,5 @@ export function SearchContainer({ size = "large" }: SearchContainerProps) {
         className={sizeClasses[size]}
       />
     </div>
-  );
+  )
 }
