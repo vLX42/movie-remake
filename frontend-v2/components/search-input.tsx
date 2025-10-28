@@ -1,55 +1,55 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef, useTransition } from "react"
-import { useRouter } from "next/navigation"
+import { useParams, useRouter } from "next/navigation";
+import { useRef, useState, useTransition } from "react";
 
 interface SearchInputProps {
-  defaultValue?: string
-  placeholder?: string
-  className?: string
+  placeholder?: string;
+  className?: string;
 }
 
 export function SearchInput({
-  defaultValue = "",
   placeholder = "Enter a movie title...",
   className = "",
 }: SearchInputProps) {
-  const [searchTerm, setSearchTerm] = useState(defaultValue)
-  const [isPending, startTransition] = useTransition()
-  const router = useRouter()
-  const inputRef = useRef<HTMLInputElement>(null)
-  const timeoutRef = useRef<NodeJS.Timeout>()
-
-  useEffect(() => {
-    setSearchTerm(defaultValue)
-  }, [defaultValue])
+  const router = useRouter();
+  const params = useParams<{ search?: string }>();
+  const [searchTerm, setSearchTerm] = useState<string>();
+  const [isPending, startTransition] = useTransition();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const navigateToSearch = (value: string) => {
-    const trimmed = value.trim()
-    const encoded = encodeURIComponent(trimmed)
-    const current = encodeURIComponent(defaultValue.trim())
+    const trimmed = value.trim();
+    const encoded = encodeURIComponent(trimmed);
 
-    if (trimmed.length >= 2 && encoded !== current) {
+    if (trimmed.length >= 2) {
       startTransition(() => {
-        router.push(`/search/${encoded}`)
-      })
+        router.push(`/search/${encoded}`);
+      });
     } else if (trimmed.length === 0) {
       startTransition(() => {
-        router.push("/")
-      })
+        router.push("/");
+      });
     }
-  }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setSearchTerm(value)
+    const value = e.target.value;
+    setSearchTerm(value);
 
-    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
     timeoutRef.current = setTimeout(() => {
-      navigateToSearch(value)
-    }, 300)
-  }
+      navigateToSearch(value);
+    }, 300);
+  };
+
+  const invalidSearchTerm = !!(
+    searchTerm &&
+    searchTerm.length > 0 &&
+    searchTerm.length < 2
+  );
 
   return (
     <div className="relative">
@@ -57,6 +57,7 @@ export function SearchInput({
         ref={inputRef}
         type="text"
         value={searchTerm}
+        defaultValue={decodeURIComponent(params.search || "")}
         onChange={handleInputChange}
         placeholder={placeholder}
         className={`w-full bg-transparent border-0 outline-0 placeholder-gray-500 text-white font-light transition-opacity duration-200 ${
@@ -73,11 +74,11 @@ export function SearchInput({
         </div>
       )}
 
-      {searchTerm.length > 0 && searchTerm.length < 2 && !isPending && (
+      {invalidSearchTerm && !isPending && (
         <div className="absolute top-full left-0 mt-2 text-sm text-gray-400">
           Type at least 2 characters to search...
         </div>
       )}
     </div>
-  )
+  );
 }
