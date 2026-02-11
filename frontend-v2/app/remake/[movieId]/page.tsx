@@ -5,11 +5,11 @@ import { OriginalMovie, MovieCoverSkeleton } from "@/components/original-movie";
 import type { Metadata } from "next";
 
 interface PageProps {
-  params: { movieId: string };
+  params: Promise<{ movieId: string }>;
 }
 
-export default function RemakePage({ params }: PageProps) {
-  const { movieId } = params;
+export default async function RemakePage({ params }: PageProps) {
+  const { movieId } = await params;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
@@ -37,7 +37,8 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   try {
-    const movie = await getMovie(params.movieId);
+    const { movieId } = await params;
+    const movie = await getMovie(movieId);
 
     // Base title and description
     const title = movie.remake?.title || `${movie.title} Remake`;
