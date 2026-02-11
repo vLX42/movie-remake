@@ -3,7 +3,7 @@ import { getPreviousRemakes } from "@/lib/get-previous-remakes"
 import styles from "./previous-remakes.module.css"
 
 export async function PreviousRemakes() {
-  const remakes = await getPreviousRemakes(4)
+  const remakes = await getPreviousRemakes(6)
 
   if (remakes.length === 0) return null
 
@@ -59,7 +59,7 @@ export function PreviousRemakesSkeleton() {
         style={{ width: "60%", margin: "0 auto 1.5rem", height: "1.5rem", background: "linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%)", backgroundSize: "200% 100%", borderRadius: "4px", animation: "loading 1.5s infinite" }}
       />
       <div className={styles.grid}>
-        {Array.from({ length: 4 }).map((_, i) => (
+        {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className={styles.skeletonCard}>
             <div className={styles.skeletonPosters} />
             <div className={styles.skeletonBody}>
