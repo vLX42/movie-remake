@@ -1,0 +1,152 @@
+.section {
+  margin-top: 3rem;
+}
+
+.heading {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 12px;
+  background: rgba(17, 24, 39, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(75, 85, 99, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+.posters {
+  display: flex;
+  width: 100%;
+  aspect-ratio: 16 / 11;
+  overflow: hidden;
+}
+
+.posterOriginal {
+  width: 40%;
+  object-fit: cover;
+}
+
+.posterRemake {
+  width: 60%;
+  object-fit: cover;
+}
+
+.cardBody {
+  padding: 1rem;
+}
+
+.label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+  margin-bottom: 0.15rem;
+}
+
+.originalTitle {
+  font-size: 0.85rem;
+  color: #d1d5db;
+  margin-bottom: 0.75rem;
+}
+
+.remakeTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #fbbf24, #ef4444, #ec4899);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Skeleton styles */
+.skeletonCard {
+  border-radius: 12px;
+  background: rgba(17, 24, 39, 0.8);
+  border: 1px solid rgba(75, 85, 99, 0.3);
+  overflow: hidden;
+}
+
+.skeletonPosters {
+  width: 100%;
+  aspect-ratio: 16 / 11;
+  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+.skeletonBody {
+  padding: 1rem;
+}
+
+.skeletonLine {
+  height: 0.75rem;
+  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.skeletonLine:nth-child(2) {
+  width: 70%;
+}
+
+.skeletonLine:nth-child(3) {
+  width: 50%;
+  margin-top: 0.75rem;
+}
+
+.skeletonLine:last-child {
+  width: 80%;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .cardBody {
+    padding: 0.75rem;
+  }
+
+  .originalTitle {
+    font-size: 0.8rem;
+  }
+
+  .remakeTitle {
+    font-size: 0.9rem;
+  }
+}

@@ -1,4 +1,8 @@
+import { Suspense } from "react"
 import { SearchContainer } from "@/components/search-container"
+import { PreviousRemakes, PreviousRemakesSkeleton } from "@/components/previous-remakes"
+
+export const revalidate = 3600
 
 export default function Page() {
   return (
@@ -15,11 +19,15 @@ export default function Page() {
         {/* Search Container */}
         <SearchContainer size="large" />
 
-        {/* Empty State */}
-        <div className="text-center py-16">
-          <div className="text-6xl mb-4">🎬</div>
-          <p className="text-xl text-gray-400">Start typing to search for movies to remake</p>
+        {/* Hint */}
+        <div className="text-center py-8">
+          <p className="text-gray-400">Search for a movie above to generate a remake</p>
         </div>
+
+        {/* Previously Generated Remakes */}
+        <Suspense fallback={<PreviousRemakesSkeleton />}>
+          <PreviousRemakes />
+        </Suspense>
       </div>
     </div>
   )
