@@ -1,10 +1,19 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Bebas_Neue, Source_Sans_3 } from "next/font/google"
 import { Footer } from "@/components/footer"
 import "./globals.css"
 
-const inter = Inter({ subsets: ["latin"] })
+const bebasNeue = Bebas_Neue({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-bebas-neue",
+})
+
+const sourceSans = Source_Sans_3({
+  subsets: ["latin"],
+  variable: "--font-source-sans-3",
+})
 
 export const metadata: Metadata = {
   title: "Hollywood Movie Remake Generator",
@@ -18,11 +27,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <meta name="view-transition" content="same-origin" />
       </head>
-      <body className={`${inter.className} bg-gray-900 min-h-screen flex flex-col`}>
+      <body className={`${bebasNeue.variable} ${sourceSans.variable} font-body bg-noir-dark min-h-screen flex flex-col`}>
         <main className="flex-1">{children}</main>
         <Footer />
       </body>

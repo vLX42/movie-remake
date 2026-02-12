@@ -11,8 +11,8 @@ export default async function SearchPage({ params }: PageProps) {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold text-white mb-6">
-        Search results for "{searchTerm}"
+      <h2 className="text-2xl font-semibold text-neon-gold mb-6">
+        Search results for &ldquo;{searchTerm}&rdquo;
       </h2>
       <Suspense key={searchTerm} fallback={<MovieSearchResultSkeleton />}>
         <MovieSearchResult promise={searchMovies(searchTerm)} />

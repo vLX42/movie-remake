@@ -1,7 +1,7 @@
 .remakeContainer {
-  background: rgba(17, 24, 39, 0.8);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(75, 85, 99, 0.3);
+  background: var(--noir-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--noir-border);
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
@@ -10,9 +10,12 @@
 .h1 {
   font-size: 2rem;
   font-weight: bold;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   color: white;
   margin-bottom: 1.5rem;
-  background: linear-gradient(135deg, #fbbf24, #ef4444, #ec4899);
+  background: linear-gradient(135deg, var(--neon-gold), var(--neon-red), var(--neon-pink));
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -43,10 +46,12 @@
 
 .poster {
   border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.5),
+    0 0 12px hsla(43, 96%, 56%, 0.15);
   width: 100%;
   height: auto;
-  border: 2px solid rgba(251, 191, 36, 0.3);
+  border: 2px solid hsla(43, 96%, 56%, 0.4);
 }
 
 .description {
@@ -66,7 +71,8 @@
   float: left;
   line-height: 1;
   padding-right: 0.5rem;
-  color: #fbbf24;
+  color: var(--neon-gold);
+  text-shadow: 0 0 10px hsla(43, 96%, 56%, 0.4);
 }
 
 .imageGenerating {
@@ -87,33 +93,39 @@
 .back {
   display: inline-block;
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #fbbf24, #ef4444);
+  background: linear-gradient(135deg, var(--neon-gold), var(--neon-red));
   color: white;
   text-decoration: none;
   border-radius: 8px;
+  font-family: var(--font-display);
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   transition: all 0.2s ease;
 }
 
 .back:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(251, 191, 36, 0.3);
+  box-shadow: 0 4px 16px hsla(43, 96%, 56%, 0.3);
 }
 
 .viewImage {
   display: inline-block;
   padding: 0.75rem 1.5rem;
-  background: rgba(31, 41, 55, 0.7);
-  color: white;
+  background: transparent;
+  color: var(--neon-gold);
   text-decoration: none;
   border-radius: 8px;
+  font-family: var(--font-display);
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   transition: all 0.2s ease;
-  border: 1px solid rgba(251, 191, 36, 0.3);
+  border: 1px solid hsla(43, 96%, 56%, 0.4);
 }
 
 .viewImage:hover {
-  background: rgba(31, 41, 55, 0.9);
+  background: hsla(43, 96%, 56%, 0.1);
   transform: translateY(-2px);
 }
 

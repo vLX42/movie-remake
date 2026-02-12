@@ -23,8 +23,11 @@
   width: 100%;
   height: auto;
   border-radius: 8px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
-  border: 2px solid rgba(251, 191, 36, 0.3);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.5),
+    0 10px 10px -5px rgba(0, 0, 0, 0.2),
+    0 0 15px hsla(43, 96%, 56%, 0.2);
+  border: 2px solid hsla(43, 96%, 56%, 0.4);
 }
 
 .titleOverlay {
@@ -46,7 +49,7 @@
 .titleOverlay span:first-child {
   font-size: 1.25rem;
   margin-bottom: 0.25rem;
-  background: linear-gradient(135deg, #fbbf24, #ef4444, #ec4899);
+  background: linear-gradient(135deg, var(--neon-gold), var(--neon-red), var(--neon-pink));
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -59,9 +62,9 @@
 }
 
 .overview {
-  background: rgba(17, 24, 39, 0.8);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(75, 85, 99, 0.3);
+  background: var(--noir-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--noir-border);
   border-radius: 12px;
   padding: 1.5rem;
   margin-top: 1rem;
@@ -72,7 +75,7 @@
 }
 
 .overview h3 {
-  color: white;
+  color: var(--neon-gold);
 }
 
 /* Skeleton styles */
@@ -80,7 +83,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: rgba(31, 41, 55, 0.5);
+  background: var(--noir-card);
   border-radius: 12px;
   padding: 1.5rem;
   width: 100%;
@@ -90,7 +93,7 @@
 .skeletonPoster {
   width: 100%;
   height: 450px;
-  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  background: linear-gradient(90deg, hsl(220 15% 10%) 25%, hsl(220 15% 15%) 50%, hsl(220 15% 10%) 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
   border-radius: 8px;
@@ -100,21 +103,21 @@
   width: 80%;
   height: 1.5rem;
   margin-top: 1rem;
-  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  background: linear-gradient(90deg, hsl(220 15% 10%) 25%, hsl(220 15% 15%) 50%, hsl(220 15% 10%) 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
   border-radius: 4px;
 }
 
 .skeletonRemake {
-  background: rgba(31, 41, 55, 0.5);
+  background: var(--noir-card);
   border-radius: 12px;
   padding: 1.5rem;
 }
 
 .skeletonHeadline {
   height: 2rem;
-  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  background: linear-gradient(90deg, hsl(220 15% 10%) 25%, hsl(220 15% 15%) 50%, hsl(220 15% 10%) 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
   border-radius: 4px;
@@ -123,7 +126,7 @@
 
 .skeletonLine {
   height: 1rem;
-  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  background: linear-gradient(90deg, hsl(220 15% 10%) 25%, hsl(220 15% 15%) 50%, hsl(220 15% 10%) 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
   border-radius: 4px;

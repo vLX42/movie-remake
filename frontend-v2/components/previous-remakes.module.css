@@ -5,7 +5,10 @@
 .heading {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--neon-gold);
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   text-align: center;
   margin-bottom: 1.5rem;
 }
@@ -21,9 +24,9 @@
   text-decoration: none;
   color: inherit;
   border-radius: 12px;
-  background: rgba(17, 24, 39, 0.8);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(75, 85, 99, 0.3);
+  background: var(--noir-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--noir-border);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   transition: all 0.2s ease;
@@ -31,8 +34,10 @@
 
 .card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  border-color: rgba(251, 191, 36, 0.3);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(255, 200, 50, 0.15);
+  border-color: hsla(43, 96%, 56%, 0.4);
 }
 
 .posters {
@@ -62,7 +67,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #9ca3af;
+  color: hsla(220, 10%, 55%, 1);
   margin-bottom: 0.15rem;
 }
 
@@ -75,7 +80,7 @@
 .remakeTitle {
   font-size: 1rem;
   font-weight: 600;
-  background: linear-gradient(135deg, #fbbf24, #ef4444, #ec4899);
+  background: linear-gradient(135deg, var(--neon-gold), var(--neon-red), var(--neon-pink));
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -84,15 +89,15 @@
 /* Skeleton styles */
 .skeletonCard {
   border-radius: 12px;
-  background: rgba(17, 24, 39, 0.8);
-  border: 1px solid rgba(75, 85, 99, 0.3);
+  background: var(--noir-card);
+  border: 1px solid var(--noir-border);
   overflow: hidden;
 }
 
 .skeletonPosters {
   width: 100%;
   aspect-ratio: 16 / 11;
-  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  background: linear-gradient(90deg, hsl(220 15% 10%) 25%, hsl(220 15% 15%) 50%, hsl(220 15% 10%) 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
 }
@@ -103,7 +108,7 @@
 
 .skeletonLine {
   height: 0.75rem;
-  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  background: linear-gradient(90deg, hsl(220 15% 10%) 25%, hsl(220 15% 15%) 50%, hsl(220 15% 10%) 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
   border-radius: 4px;

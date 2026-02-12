@@ -12,13 +12,13 @@ export default async function RemakePage({ params }: PageProps) {
   const { movieId } = await params;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-noir-dark via-black to-noir-dark">
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header with back link */}
         <div className="text-center mb-8">
           <Link
             href="/"
-            className="inline-block text-2xl md:text-4xl font-bold bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 bg-clip-text text-transparent hover:opacity-80 transition-opacity mb-4"
+            className="inline-block text-2xl md:text-4xl font-display uppercase tracking-wider bg-gradient-to-r from-neon-gold via-neon-red to-neon-pink bg-clip-text text-transparent hover:opacity-80 transition-opacity mb-4 animate-neon-pulse"
           >
             Hollywood Movie Remake Generator
           </Link>

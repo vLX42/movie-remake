@@ -1,23 +1,21 @@
 "use client"
 
+import { usePathname } from "next/navigation"
 import { SearchInput } from "./search-input"
 
-interface SearchContainerProps {
-  searchTerm?: string
-  size?: "large" | "medium"
-}
+export function SearchContainer() {
+  const pathname = usePathname()
+  const isHome = pathname === "/"
 
-export function SearchContainer({ size = "large" }: SearchContainerProps) {
-  const sizeClasses = {
-    large: "text-2xl md:text-3xl p-6",
-    medium: "text-xl md:text-2xl p-4",
-  }
+  const sizeClass = isHome
+    ? "text-2xl md:text-3xl p-6"
+    : "text-xl md:text-2xl p-4"
 
   return (
     <div className="mb-8">
       <SearchInput
         placeholder="Enter a movie title..."
-        className={sizeClasses[size]}
+        className={sizeClass}
       />
     </div>
   )

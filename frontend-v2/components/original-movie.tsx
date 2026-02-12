@@ -21,7 +21,7 @@ export async function OriginalMovie({
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
       {/* Original Movie Section - 4 columns on large screens */}
       <div className="lg:col-span-4 flex flex-col items-center">
-        <h2 className="text-2xl font-bold text-white mb-6">Original Movie</h2>
+        <h2 className="text-2xl font-display uppercase tracking-wider text-neon-gold mb-6">Original Movie</h2>
         {movieData ? (
           <div className={styles.blurayCover}>
             <div className={styles.posterContainer}>
@@ -53,7 +53,7 @@ export async function OriginalMovie({
 
       {/* Remake Section - 8 columns on large screens */}
       <div className="lg:col-span-8 flex flex-col">
-        <h2 className="text-2xl font-bold text-white mb-6">Hollywood Remake</h2>
+        <h2 className="text-2xl font-display uppercase tracking-wider text-neon-gold mb-6">Hollywood Remake</h2>
         <Remake
           title={movieData.title}
           releaseDate={movieData.release_date}
@@ -68,14 +68,14 @@ export async function OriginalMovie({
 export const MovieCoverSkeleton = () => (
   <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
     <div className="lg:col-span-4 flex flex-col items-center">
-      <h2 className="text-2xl font-bold text-white mb-6">Original Movie</h2>
+      <h2 className="text-2xl font-display uppercase tracking-wider text-neon-gold mb-6">Original Movie</h2>
       <div className={styles.skeletonCover}>
         <div className={styles.skeletonPoster} />
         <div className={styles.skeletonTitle} />
       </div>
     </div>
     <div className="lg:col-span-8 flex flex-col">
-      <h2 className="text-2xl font-bold text-white mb-6">Hollywood Remake</h2>
+      <h2 className="text-2xl font-display uppercase tracking-wider text-neon-gold mb-6">Hollywood Remake</h2>
       <div className={styles.skeletonRemake}>
         <div className={styles.skeletonHeadline} />
         {Array.from({ length: 5 }).map((_, i) => (

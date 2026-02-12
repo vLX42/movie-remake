@@ -23,8 +23,8 @@ export async function MovieSearchResult({
     return (
       <div className="text-center py-16">
         <div className="text-4xl mb-4">🎭</div>
-        <h3 className="text-xl font-semibold text-white mb-2">No movies found</h3>
-        <p className="text-gray-400">Try searching with a different movie title</p>
+        <h3 className="text-xl font-semibold text-foreground mb-2">No movies found</h3>
+        <p className="text-muted-foreground">Try searching with a different movie title</p>
       </div>
     )
   }
@@ -44,8 +44,8 @@ export async function MovieSearchResult({
                   height={300}
                 />
               ) : (
-                <div className="w-[200px] h-[300px] bg-gray-800 rounded-lg flex items-center justify-center">
-                  <span className="text-gray-400 text-4xl">🎬</span>
+                <div className="w-[200px] h-[300px] bg-noir-card rounded-lg flex items-center justify-center">
+                  <span className="text-muted-foreground text-4xl">🎬</span>
                 </div>
               )}
             </div>

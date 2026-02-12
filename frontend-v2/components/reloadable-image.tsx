@@ -15,8 +15,8 @@ export function ReloadableImage({ src, width, height, alt, className }: Reloadab
 
   if (imageError) {
     return (
-      <div className={`${className} bg-gray-800 rounded-lg flex items-center justify-center`}>
-        <span className="text-gray-400">Failed to load image</span>
+      <div className={`${className} bg-noir-card rounded-lg flex items-center justify-center`}>
+        <span className="text-muted-foreground">Failed to load image</span>
       </div>
     )
   }
