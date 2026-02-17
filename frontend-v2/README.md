@@ -30,7 +30,7 @@ Set the `NEXT_PUBLIC_BASE_URL` environment variable to configure the base URL us
 NEXT_PUBLIC_BASE_URL=https://your-domain.com
 ```
 
-If not set, it defaults to `https://movie-remake.vercel.app`.
+If not set, it defaults to `https://movie-remake.vlx.dk`.
 
 ## Development
 
@@ -55,4 +55,4 @@ Required environment variables:
 - `UPLOADTHING_TOKEN` - UploadThing API token for file storage
 - `UPLOADTHING_APP_ID` - UploadThing application ID
 - `THEMOVIEDB_API_KEY` - The Movie Database API key
-- `NEXT_PUBLIC_BASE_URL` - Base URL for the application (optional, defaults to https://movie-remake.vercel.app)
+- `NEXT_PUBLIC_BASE_URL` - Base URL for the application (optional, defaults to https://movie-remake.vlx.dk)
