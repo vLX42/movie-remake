@@ -1,10 +1,10 @@
 import { MetadataRoute } from "next"
 import { getPreviousRemakes } from "@/lib/get-previous-remakes"
+import { baseUrl } from "@/lib/config"
 
 export const revalidate = 3600 // Revalidate every hour
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://movie-remake.vlx.dk"
   const now = new Date()
 
   // Static routes
