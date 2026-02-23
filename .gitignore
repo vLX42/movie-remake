@@ -13,3 +13,4 @@ frontend-v2/.env.local
 # Snyk Security Extension - AI Rules (auto-generated)
 .github/instructions/snyk_rules.instructions.md
 frontend-v2/package-lock.json
+frontend-v2/tsconfig.tsbuildinfo
