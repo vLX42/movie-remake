@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getMovie } from "@/lib/get-movie";
 import { OriginalMovie, MovieCoverSkeleton } from "@/components/original-movie";
 import type { Metadata } from "next";
+import { baseUrl } from "@/lib/config";
 
 interface PageProps {
   params: Promise<{ movieId: string }>;
@@ -57,6 +58,9 @@ export async function generateMetadata({
       title: `${title} | Hollywood Movie Remake Generator`,
       description:
         description.substring(0, 160) + (description.length > 160 ? "..." : ""),
+      alternates: {
+        canonical: `${baseUrl}/remake/${movieId}`,
+      },
       openGraph: {
         title: title,
         description:
@@ -74,6 +78,7 @@ export async function generateMetadata({
           : [],
         type: "website",
         siteName: "Hollywood Movie Remake Generator",
+        url: `${baseUrl}/remake/${movieId}`,
       },
       twitter: {
         card: "summary_large_image",

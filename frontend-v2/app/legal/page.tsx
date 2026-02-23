@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { baseUrl } from "@/lib/config"
 
 export default function LegalPage() {
   return (
@@ -60,4 +61,7 @@ export default function LegalPage() {
 export const metadata = {
   title: "Legal | Hollywood Movie Remake Generator",
   description: "Legal disclaimer and license information for the Hollywood Movie Remake Generator",
+  alternates: {
+    canonical: `${baseUrl}/legal`,
+  },
 }

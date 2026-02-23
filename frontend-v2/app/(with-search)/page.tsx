@@ -1,7 +1,15 @@
 import { Suspense } from "react"
+import type { Metadata } from "next"
 import { PreviousRemakes, PreviousRemakesSkeleton } from "@/components/previous-remakes"
+import { baseUrl } from "@/lib/config"
 
 export const revalidate = 3600
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: baseUrl,
+  },
+}
 
 export default function Page() {
   return (

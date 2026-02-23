@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Bebas_Neue, Source_Sans_3 } from "next/font/google"
 import { Footer } from "@/components/footer"
+import { baseUrl } from "@/lib/config"
 import "./globals.css"
 
 const bebasNeue = Bebas_Neue({
@@ -16,8 +17,12 @@ const sourceSans = Source_Sans_3({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(baseUrl),
   title: "Hollywood Movie Remake Generator",
   description: "Search for movies to reimagine and remake in Hollywood style",
+  alternates: {
+    canonical: baseUrl,
+  },
     generator: 'v0.dev'
 }
 
